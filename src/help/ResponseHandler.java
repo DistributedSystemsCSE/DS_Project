@@ -1,5 +1,6 @@
-package ds_project;
+package help;
 
+import ds_project.Neighbour;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,12 +9,12 @@ import java.util.List;
  *
  * @author Buddhi
  */
-public class MessageHandler {
+public class ResponseHandler {
 
     public static List<String> message_list;
     public static List<Neighbour> neighbours_list;
 
-    public MessageHandler() {
+    public ResponseHandler() {
         message_list = new ArrayList<>();
     }
 
@@ -21,7 +22,6 @@ public class MessageHandler {
      * @param message
      *
      *
-     * length JOIN IP_address port_no
      * length JOINOK value
      * length LEAVE IP_address port_no
      * length LEAVEOK value
