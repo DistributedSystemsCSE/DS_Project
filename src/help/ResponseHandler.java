@@ -127,4 +127,20 @@ public class ResponseHandler {
         }
         return false;
     }
+    
+    /**
+     * @param message
+     * @return
+     * 
+     * length UNROK value
+     */
+    public boolean decodeUnregisterResponse(String message) {
+        try {
+            String[] mes = message.split(" ");
+            return mes[1].equals("UNROK") && mes[1].equals("0");
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return false;
+    }
 }
