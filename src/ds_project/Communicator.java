@@ -6,15 +6,12 @@
 package ds_project;
 
 import Configs.Configs;
-import java.io.BufferedReader;
+import help.Message;
+import help.MessageType;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  *
@@ -60,8 +57,9 @@ public class Communicator {
     public void sendForBS(String message){
         try{
             
-            DatagramSocket ds = new DatagramSocket();  
-            String str = "0029 REG 10.10.0.215 57000 vwb";  
+            DatagramSocket ds = new DatagramSocket(); 
+            
+            String str = (new Message(MessageType.REG, configs.getClientIP(), configs.getClientPort(), "abc")).getMessage();  
             InetAddress ip = InetAddress.getByName("10.10.0.215");  
             //InetAddress ip = InetAddress.getByName("127.0.0.1");  
             DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 55555);  
@@ -69,8 +67,8 @@ public class Communicator {
             ds.close();  
         
             
-        }catch(IOException ioe){
-            ioe.printStackTrace();
+        }catch(IOException ex){
+            ex.printStackTrace();
 	}
         
     }
