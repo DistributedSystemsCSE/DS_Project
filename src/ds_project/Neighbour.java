@@ -2,6 +2,7 @@ package ds_project;
 
 import help.Message;
 import help.MessageType;
+import help.ResponseHandler;
 import java.util.Objects;
 
 /**
@@ -26,9 +27,13 @@ public class Neighbour {
         return port;
     }
     
-    public void sendJoin(){
-        String message = (new Message(MessageType.JOIN, ip, port)).getMessage();
+    public boolean sendJoinAsFirstNeighbour(){
+        String message = (new Message(MessageType.JOIN, ip, port))
+                .getMessage();
         com.sendToNeighbour(message, ip, port);
+        String responce = com.receiveWithTimeout();
+        return ResponseHandler.getInstance()
+                .decodeInitialJoinResponse(responce);
     }
     
     public void setCommunicator(Communicator com){
