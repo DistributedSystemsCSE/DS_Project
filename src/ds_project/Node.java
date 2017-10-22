@@ -3,6 +3,7 @@ package ds_project;
 import Configs.Configs;
 import help.Message;
 import help.MessageType;
+import help.ResponseHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -52,10 +53,11 @@ public class Node implements Observer{
     public boolean register(){
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
-        com.sendForBS(str);
+        com.sendToBS(str);
         String responce = com.receiveFromBS();
         
-        Neighbour[] neighbours = null;
+        Neighbour[] neighbours = ResponseHandler.getInstance()
+                .decodeRegisterResponse(responce);
         
         if(neighbours.length==0){
             return true;
@@ -73,10 +75,13 @@ public class Node implements Observer{
         return false;
     }
     
-    public void unregister(){
+    public boolean unregister(){
         String str = (new Message(MessageType.UNREG, ip,port, name))
                 .getMessage();  
-        com.sendForBS(str);
+        com.sendToBS(str);
+        String responce = com.receiveFromBS();
+        return ResponseHandler.getInstance()
+                .decodeUnregisterResponse(responce);
     }
     
     public boolean addNeighbours(Neighbour neb){
