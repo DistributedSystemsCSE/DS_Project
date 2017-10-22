@@ -1,7 +1,7 @@
 package help;
 
 import ds_project.Neighbour;
-import java.util.ArrayList;
+import ds_project.Node;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,23 +11,20 @@ import java.util.List;
  */
 public class ResponseHandler {
 
+    private final Node node;
     public static List<String> message_list;
-    public static List<Neighbour> neighbours_list;
 
-    public ResponseHandler() {
-        message_list = new ArrayList<>();
+    public ResponseHandler(Node node) {
+        this.node = node;
     }
 
     /**
      * @param message
      *
      *
-     * length JOINOK value
-     * length LEAVE IP_address port_no
-     * length LEAVEOK value
-     * length SER IP port file_name hops
-     * length SEROK no_files IP port hops filename1 filename2
-     * length ERROR
+     * length JOINOK value length LEAVE IP_address port_no length LEAVEOK value
+     * length SER IP port file_name hops length SEROK no_files IP port hops
+     * filename1 filename2 length ERROR
      */
     public void handle(String message) {
 
@@ -43,8 +40,8 @@ public class ResponseHandler {
                     break;
                 case "JOIN":
                     if (!addMessage(message)) {
-                        if(addNeighbours(new Neighbour(mes[2], mes[3]))){
-                            
+                        if (addNeighbours(new Neighbour(mes[2], mes[3]))) {
+
                         }
                     }
                     break;
@@ -72,15 +69,6 @@ public class ResponseHandler {
 
     }
 
-    public boolean addNeighbours(Neighbour neb) {
-        if (!neighbours_list.stream().noneMatch((tem) -> (tem == neb))) {
-            return false;
-        }
-        
-        neighbours_list.add(neb);
-        return true;
-    }
-
     public synchronized boolean addMessage(String message) {
         if (message_list.stream().anyMatch((str) -> (str.equals(message)))) {
             return true;
@@ -90,4 +78,24 @@ public class ResponseHandler {
         }
     }
 
+    /**
+     * @param message
+     * @return
+     *
+     * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
+     */
+    public Neighbour[] decodeRegisterResponse(String message) {
+        try {
+            String[] mes = message.split(" ");
+            int no_nodes = Integer.parseInt(mes[2]);
+            Neighbour[] neighbour = new Neighbour[no_nodes];
+            for (int n = 0; n < no_nodes; n++) {
+                neighbour[n] = new Neighbour(mes[(n * 2) + 3], mes[(n * 2) + 4]);
+            }
+            return neighbour;
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return null;
+    }
 }
