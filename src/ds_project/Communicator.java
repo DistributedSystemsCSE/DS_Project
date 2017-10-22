@@ -6,26 +6,49 @@
 package ds_project;
 
 import Configs.Configs;
-import help.Message;
-import help.MessageType;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Observable;
 
 /**
  *
  * @author Hareen Udayanath
  */
-public class Communicator {
-    private String serverIP;
-    private int serverPort;
+public class Communicator extends Observable implements Runnable{
+    private final String serverIP;
+    private final int serverPort;
     private Configs configs;
+    
+    private String message;
     
     private Communicator(){
         configs = new Configs();
         serverIP = configs.getServerIP();
         serverPort = configs.getServerPort();        
+    }
+
+    @Override
+    public void run() {
+        while(true){
+            try{
+                DatagramSocket ds = new DatagramSocket(configs.getClientPort());  
+                byte[] buf = new byte[65536];  
+                DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
+                ds.receive(incoming);  
+                String str = new String(incoming.getData(), 0, incoming.getLength());  
+                //System.out.println(str);  
+                ds.close();  
+                
+                this.message = str;                
+                setChanged();
+                notifyObservers();
+                
+            }catch(IOException ex){
+                
+            }
+        }
     }
     
     private static class InstanceHolder{
@@ -54,15 +77,14 @@ public class Communicator {
         return null;
     }
     
-    public void sendForBS(String message){
+    public void sendForBS(String str){
         try{
             
-            DatagramSocket ds = new DatagramSocket(); 
+            DatagramSocket ds = new DatagramSocket(configs.getClientPort()); 
             
-            String str = (new Message(MessageType.REG, configs.getClientIP(), configs.getClientPort(), "abc")).getMessage();  
-            InetAddress ip = InetAddress.getByName("10.10.0.215");  
+            InetAddress ip = InetAddress.getByName(configs.getServerIP());  
             //InetAddress ip = InetAddress.getByName("127.0.0.1");  
-            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 55555);  
+            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, configs.getServerPort());  
             ds.send(dp);  
             ds.close();  
         
@@ -73,6 +95,14 @@ public class Communicator {
         
     }
     
+    
      
+    public void addNode(Node node){    
+        this.addObserver(node);
+    }
+    
+    public String getMessage(){
+        return this.message;
+    }
     
 }
