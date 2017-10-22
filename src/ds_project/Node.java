@@ -3,6 +3,8 @@ package ds_project;
 import Configs.Configs;
 import help.Message;
 import help.MessageType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,9 +18,11 @@ public class Node implements Observer{
     private final String name;
     private final Configs configs;
     private Communicator com = null;
+    private final List<Neighbour> neighbours_list;
     
     private Node(){
         configs = new Configs();
+        neighbours_list = new ArrayList<>();
         name = configs.getClientName();
         ip = configs.getClientIP();
         port  = configs.getClientPort();
@@ -45,10 +49,28 @@ public class Node implements Observer{
         this.com = com;
     }
     
-    public void register(){
+    public boolean register(){
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
         com.sendForBS(str);
+        String responce = com.receiveFromBS();
+        
+        Neighbour[] neighbours = null;
+        
+        if(neighbours.length==0){
+            return true;
+        }else if(neighbours.length==1){
+            if(!neighbours[0].sendJoinAsFirstNeighbour()){
+                unregister();
+                return false;
+            }
+            return true;
+        }else if(neighbours.length==2){
+        
+        }else if(neighbours.length==3){
+        
+        }
+        return false;
     }
     
     public void unregister(){
@@ -56,4 +78,15 @@ public class Node implements Observer{
                 .getMessage();  
         com.sendForBS(str);
     }
+    
+    public boolean addNeighbours(Neighbour neb){
+        if (!neighbours_list.stream().noneMatch((tem) -> (tem.equals(neb)))) {
+            return false;
+        }
+        
+        neighbours_list.add(neb);
+        return true;
+    }
+    
+    
 }
