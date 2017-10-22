@@ -30,6 +30,14 @@ public class Communicator extends Observable implements Runnable{
         serverIP = configs.getServerIP();
         serverPort = configs.getServerPort();        
     }
+    
+    private static class InstanceHolder{
+        static Communicator instance = new Communicator();
+    }
+    
+    public static Communicator getInstance(){
+        return InstanceHolder.instance;
+    }
 
     @Override
     public void run() {
@@ -55,15 +63,7 @@ public class Communicator extends Observable implements Runnable{
                 socket.close();
             }
         }
-    }
-    
-    private static class InstanceHolder{
-        static Communicator instance = new Communicator();
-    }
-    
-    public static Communicator getInstance(){
-        return InstanceHolder.instance;
-    }
+    }   
     
     public String sendToNeighbour(String message, String peerIp, int peerPort){
         DatagramSocket socket = null;
@@ -126,7 +126,7 @@ public class Communicator extends Observable implements Runnable{
 //        }
 //    }
     
-    public void sendForBS(String str){
+    public void sendToBS(String str){
         
         DatagramSocket socket = null;
         try{
@@ -145,6 +145,8 @@ public class Communicator extends Observable implements Runnable{
         
     }
     
+    // TODO
+    // Refactor the code.............
     public String receiveFromBS(){
         DatagramSocket socket = null;
             try{
