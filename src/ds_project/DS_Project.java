@@ -24,8 +24,8 @@ public class DS_Project {
         Node.getInstance().setCommunicator(Communicator.getInstance());
         Communicator.getInstance().addNode(Node.getInstance());
         
-        Thread receiver = new Thread(Communicator.getInstance());
-        receiver.start();
+//        Thread receiver = new Thread(Communicator.getInstance());
+//        receiver.start();
         Node.getInstance().register();
         
         
