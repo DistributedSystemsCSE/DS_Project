@@ -11,11 +11,22 @@ import java.util.List;
  */
 public class ResponseHandler {
 
-    private final Node node;
+    private Node node;
     public static List<String> message_list;
 
-    public ResponseHandler(Node node) {
+    private ResponseHandler() {
+    }
+
+    public void setNode(Node node) {
         this.node = node;
+    }
+    
+    private static class InstanceHolder{
+        static ResponseHandler instance = new ResponseHandler();
+    }
+    
+    public static ResponseHandler getInstance(){
+        return InstanceHolder.instance;
     }
 
     /**
