@@ -57,4 +57,27 @@ public class Configs {
             return -1;
         }
     }
+    
+    public int getTimeout(){
+        try{
+            prop.load(new FileInputStream("configs.ds"));
+            return Integer.valueOf(prop.getProperty("TIME_OUT"));
+        }catch(ClassCastException ex){
+            //System.out.println(ex.getMessage());
+            return -1;
+        }catch(IOException ex){
+            //System.out.println(ex.getMessage());
+            return -1;
+        }
+    }
+    
+     public String getClientName(){
+        try{
+            prop.load(new FileInputStream("configs.ds"));
+            return prop.getProperty("CLIENT_NAME");
+        }catch(IOException ex){
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
 }
