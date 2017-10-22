@@ -22,9 +22,11 @@ public class ResponseHandler {
      * @param message
      *
      *
-     * length JOINOK value length LEAVE IP_address port_no length LEAVEOK value
-     * length SER IP port file_name hops length SEROK no_files IP port hops
-     * filename1 filename2 length ERROR
+     * length JOINOK value 
+     * length LEAVE IP_address port_no 
+     * length LEAVEOK value
+     * length SER IP port file_name hops 
+     * length SEROK no_files IP port hops filename1 filename2 length ERROR
      */
     public void handle(String message) {
 
@@ -97,5 +99,21 @@ public class ResponseHandler {
             System.err.println(e);
         }
         return null;
+    }
+    
+    /**
+     * @param message
+     * @return
+     * 
+     * length JOINOK value
+     */
+    public boolean decodeInitialJoinResponse(String message) {
+        try {
+            String[] mes = message.split(" ");
+            return mes[1].equals("JOINOK") && mes[1].equals("0");
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return false;
     }
 }
