@@ -1,5 +1,7 @@
 package ds_project;
 
+import help.Message;
+import help.MessageType;
 import java.util.Objects;
 
 /**
@@ -8,9 +10,10 @@ import java.util.Objects;
  */
 public class Neighbour {
     private final String ip;
-    private final String port;
+    private final int port;
+    private Communicator com = null;
 
-    public Neighbour(String ip, String port) {
+    public Neighbour(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
@@ -19,8 +22,17 @@ public class Neighbour {
         return ip;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
+    }
+    
+    public void sendJoin(){
+        String message = (new Message(MessageType.JOIN, ip, port)).getMessage();
+        com.sendToNeighbour(message, ip, port);
+    }
+    
+    public void setCommunicator(Communicator com){
+        this.com = com;
     }
 
     @Override
