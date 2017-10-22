@@ -39,7 +39,14 @@ public class Node implements Observer{
     }
     
     public void register(){
-        String str = (new Message(MessageType.REG, configs.getClientIP(), configs.getClientPort(), "abc")).getMessage();  
+        String str = (new Message(MessageType.REG, configs.getClientIP(), 
+                configs.getClientPort(), configs.getClientName())).getMessage();  
+        com.sendForBS(str);
+    }
+    
+    public void unregister(){
+        String str = (new Message(MessageType.UNREG, configs.getClientIP(), 
+                configs.getClientPort(), configs.getClientName())).getMessage();  
         com.sendForBS(str);
     }
 }
