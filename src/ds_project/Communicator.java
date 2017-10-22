@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
 
 /**
@@ -20,11 +21,12 @@ public class Communicator extends Observable implements Runnable{
     private final String serverIP;
     private final int serverPort;
     private Configs configs;
-    
+    private int timeout;
     private String message;
     
     private Communicator(){
         configs = new Configs();
+        timeout = configs.getTimeout();
         serverIP = configs.getServerIP();
         serverPort = configs.getServerPort();        
     }
@@ -32,14 +34,16 @@ public class Communicator extends Observable implements Runnable{
     @Override
     public void run() {
         while(true){
+            DatagramSocket socket = null;
             try{
-                DatagramSocket ds = new DatagramSocket(configs.getClientPort());  
+                
+                socket = new DatagramSocket(configs.getClientPort());  
                 byte[] buf = new byte[65536];  
                 DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-                ds.receive(incoming);  
-                String str = new String(incoming.getData(), 0, incoming.getLength());  
-                //System.out.println(str);  
-                ds.close();  
+                socket.receive(incoming);  
+                String str = new String(incoming.getData(), 0, 
+                        incoming.getLength());                  
+                
                 
                 this.message = str;                
                 setChanged();
@@ -47,6 +51,8 @@ public class Communicator extends Observable implements Runnable{
                 
             }catch(IOException ex){
                 
+            }finally{
+                socket.close();
             }
         }
     }
@@ -59,42 +65,104 @@ public class Communicator extends Observable implements Runnable{
         return InstanceHolder.instance;
     }
     
-    public String send(String message, String peerIp, int peerPort){
+    public String sendToNeighbour(String message, String peerIp, int peerPort){
+        DatagramSocket socket = null;
         try{
-            DatagramSocket clientSocket = new DatagramSocket(); 
+            socket = new DatagramSocket(); 
             InetAddress IPAddress = InetAddress.getByName(peerIp); 
             
             byte[] toSend  = message.getBytes(); 
 		  
-            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, IPAddress, peerPort); 
-            System.out.println("sending message:"+message+"\nfrom-"+configs.getClientIP()+":"+configs.getClientPort()+",to-"+peerIp+":"+peerPort);
-            clientSocket.send(packet);
+            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
+                    IPAddress, peerPort); 
             
-            }
-        catch(IOException ioe){
+            socket.send(packet);
+            
+        }catch(IOException ioe){
             ioe.printStackTrace();
-	}
+	}finally{
+            socket.close();
+        }
         return null;
     }
     
+    public String receiveWithTimeout(){
+        DatagramSocket socket = null;
+        try{
+
+            socket = new DatagramSocket(configs.getClientPort());  
+            socket.setSoTimeout(timeout);
+            byte[] buf = new byte[65536];  
+            DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
+            socket.receive(incoming);  
+            String str = new String(incoming.getData(), 0, 
+                    incoming.getLength());               
+            return str;
+        } catch (SocketTimeoutException e) {
+            return null;
+        }catch(IOException ex){
+            return null;
+        }finally{
+            socket.close();
+        }
+    }
+    
+//    public String receiveFromBeighbour(){
+//        DatagramSocket socket = null;
+//        try{
+//
+//            socket = new DatagramSocket(configs.getClientPort());  
+//            byte[] buf = new byte[65536];  
+//            DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
+//            socket.receive(incoming);  
+//            String str = new String(incoming.getData(), 0, 
+//                    incoming.getLength());               
+//            return str;
+//
+//        }catch(IOException ex){
+//            return null;
+//        }finally{
+//            socket.close();
+//        }
+//    }
+    
     public void sendForBS(String str){
+        
+        DatagramSocket socket = null;
         try{
             
-            DatagramSocket ds = new DatagramSocket(configs.getClientPort()); 
-            
-            InetAddress ip = InetAddress.getByName(configs.getServerIP());  
-            //InetAddress ip = InetAddress.getByName("127.0.0.1");  
-            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, configs.getServerPort());  
-            ds.send(dp);  
-            ds.close();  
-        
+            socket = new DatagramSocket(configs.getClientPort());           
+            InetAddress ip = InetAddress.getByName(configs.getServerIP());             
+            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), 
+                    ip, configs.getServerPort());  
+            socket.send(dp);       
             
         }catch(IOException ex){
             ex.printStackTrace();
-	}
+	}finally{
+            socket.close(); 
+        }
         
     }
     
+    public String receiveFromBS(){
+        DatagramSocket socket = null;
+            try{
+                
+                socket = new DatagramSocket(configs.getClientPort());  
+                byte[] buf = new byte[65536];  
+                DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
+                socket.receive(incoming);  
+                String str = new String(incoming.getData(), 0, 
+                        incoming.getLength());               
+                return str;
+                
+            }catch(IOException ex){
+                return null;
+            }finally{
+                socket.close();
+            }
+    }
     
      
     public void addNode(Node node){    
