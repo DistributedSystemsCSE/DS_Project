@@ -40,9 +40,9 @@ public class ResponseHandler {
                     break;
                 case "JOIN":
                     if (!addMessage(message)) {
-                        if (addNeighbours(new Neighbour(mes[2], mes[3]))) {
-
-                        }
+//                        if (addNeighbours(new Neighbour(mes[2], mes[3]))) {
+//
+//                        }
                     }
                     break;
                 case "JOINOK":
@@ -90,7 +90,7 @@ public class ResponseHandler {
             int no_nodes = Integer.parseInt(mes[2]);
             Neighbour[] neighbour = new Neighbour[no_nodes];
             for (int n = 0; n < no_nodes; n++) {
-                neighbour[n] = new Neighbour(mes[(n * 2) + 3], mes[(n * 2) + 4]);
+                neighbour[n] = new Neighbour(mes[(n * 2) + 3], Integer.parseInt(mes[(n * 2) + 4]));
             }
             return neighbour;
         } catch (Exception e) {
