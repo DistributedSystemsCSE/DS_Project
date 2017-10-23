@@ -30,7 +30,7 @@ public class Neighbour {
     public boolean sendJoinAsFirstNeighbour(){
         String message = (new Message(MessageType.JOIN, ip, port))
                 .getMessage();
-        com.sendToNeighbour(message, ip, port);
+        com.send(message, ip, port,-1);
         String responce = com.receiveWithTimeout();
         return ResponseHandler.getInstance()
                 .decodeInitialJoinResponse(responce);
