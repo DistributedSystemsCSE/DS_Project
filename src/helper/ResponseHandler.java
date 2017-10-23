@@ -93,10 +93,9 @@ public class ResponseHandler {
 
     /**
      * @param message
-     * @return
-     *
-     * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
      * @throws helper.BsRegisterException
+     * 
+     * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
      */
     public Neighbour[] decodeRegisterResponse(String message) throws BsRegisterException {
         
@@ -122,37 +121,35 @@ public class ResponseHandler {
             }
         }
         return null;
-    }
+    }    
     
     /**
      * @param message
-     * @return
+     * @throws BsRegisterException
      * 
      * length JOINOK value
      */
-    public boolean decodeInitialJoinResponse(String message) {
+    public boolean decodeInitialJoinResponse(String message) throws BsRegisterException {
         try {
             String[] mes = message.split(" ");
             return mes[1].equals("JOINOK") && mes[1].equals("0");
         } catch (Exception e) {
-            System.err.println(e);
+            throw new BsRegisterException("Error while adding new node to routing table");
         }
-        return false;
     }
     
     /**
      * @param message
-     * @return
+     * @throws BsRegisterException
      * 
      * length UNROK value
      */
-    public boolean decodeUnregisterResponse(String message) {
+    public boolean decodeUnregisterResponse(String message) throws BsRegisterException {
         try {
             String[] mes = message.split(" ");
             return mes[1].equals("UNROK") && mes[1].equals("0");
         } catch (Exception e) {
-            System.err.println(e);
+            throw new BsRegisterException("Error while unregistering. IP and port may not be in the registry or command is incorrect");
         }
-        return false;
     }
 }
