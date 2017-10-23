@@ -1,6 +1,7 @@
 package ds_project;
 
 import Configs.Configs;
+import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
 import helper.ResponseHandler;
@@ -58,14 +59,19 @@ public class Node implements Observer{
     }
     
     public boolean register(){
+        Neighbour[] neighbours = null;
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
         com.sendToBS(str);
         String responce = com.receiveFromBS();
-        
-        Neighbour[] neighbours = ResponseHandler.getInstance()
+        try{
+            neighbours = ResponseHandler.getInstance()
                 .decodeRegisterResponse(responce);
-        System.out.println("Size: "+neighbours.length);
+        }catch(BsRegisterException ex){
+            return false;
+            System.out.println(ex.getMessage());
+        }
+        //System.out.println("Size: "+neighbours.length);
         
         if(neighbours.length==0){
             return true;

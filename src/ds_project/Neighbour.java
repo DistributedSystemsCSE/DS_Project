@@ -1,5 +1,6 @@
 package ds_project;
 
+import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
 import helper.ResponseHandler;
@@ -27,7 +28,7 @@ public class Neighbour {
         return port;
     }
     
-    public boolean sendJoinAsFirstNeighbour(){
+    public boolean sendJoinAsFirstNeighbour() throws BsRegisterException{
         String message = (new Message(MessageType.JOIN, ip, port))
                 .getMessage();
         com.send(message, ip, port,-1);
