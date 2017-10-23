@@ -10,6 +10,79 @@ import java.util.List;
 public class Message {
    private String message;
     
+    //NEW
+    public Message(MessageType type, int value, String ip, int port){
+        switch(type){
+            case JOINOK: message=appendLength("JOINOK"+" "+value+" "+ip+" "+port);
+                break;
+        }
+    }
+    
+    //NEW
+    public Message(MessageType type, String ip, int port){
+        switch (type){
+            case LEAVE:
+                message = appendLength("LEAVE"+" "+ip+" "+port);
+                break;
+            case LEAVEOK:
+                message = appendLength("LEAVEOK"+" "+ip+" "+port);
+        }
+    }
+    
+    //NEW
+    public Message(MessageType type, String ip, int port, int count){
+        switch (type){
+            case NEREQ:
+                message = appendLength("NEREQ"+" "+ip+" "+port+" "+count);
+                break;
+        }
+    }
+    
+    //NEW
+    public Message(MessageType type, int value, String[] ip, int[] port){
+        switch (type){
+            case NERRES:
+                String neighbourList="";
+                for(int i=0;i<value;i++){
+                    neighbourList = neighbourList+" "+ip[i]+" "+String.valueOf(port[i]);
+                }
+                message = appendLength("NERRES"+" "+value+neighbourList);
+                break;
+        }
+    }
+    
+    //NEW
+    public Message(MessageType type, String ip, int port, String ip_forwarding, 
+            int port_forwarding, String fileNanme, int hops, String timeStamp){
+        switch(type){
+            case SER:
+                message=appendLengthWithOutTime("SER"+" "+ip+" "+port+" "+ip_forwarding+" "
+                        +port_forwarding+" "+fileNanme+" "+hops+" "+timeStamp);
+                break;
+        }
+    }
+    
+    //NEW
+    public Message(MessageType type, int noOfFiles, String fileDestinationIp,
+            int fileDestinationPort, int hops, List<String> files){
+
+        switch(type){
+        
+            case SEROK: 
+            {
+                String filesString="";
+                for (String file : files) {
+                    filesString = filesString +" "+ file;
+                }
+                message=appendLength("SEROK"+" "+noOfFiles+" "+fileDestinationIp+" "+fileDestinationPort+" "+hops+" "+filesString);
+                break;
+        
+            }
+        }
+    }
+
+    //OLD------------------------------------------
+    
     public Message(MessageType type, String ip, int port, String name){
 
         switch(type){
@@ -57,15 +130,6 @@ public class Message {
         }
     }
     
-    public Message(MessageType type, int value, String ip, int port){
-        switch(type){
-            case JOINOK: message=appendLength("JOINOK"+" "+value+" "+ip+" "+port);
-                break;
-        }
-    }
-    
-    
-    
     public Message(MessageType type, int success){
         switch(type){
             case JOINOK: message=appendLength("JOINOK"+" "+success);
@@ -81,54 +145,6 @@ public class Message {
             //case SEROK: message=appendLength("SEROK"+" "+"0"+" "+searchKey);
             case SEROK: message=appendLength("SEROK"+" "+"0"+" "+searchKey+" "+intermediateIp+" "+intermediatePort);
                 break;        
-        }
-    }
-    
-    public Message(MessageType type, String ip, int port){
-        switch (type){
-            case LEAVE:
-                message = appendLength("LEAVE"+" "+ip+" "+port);
-                break;
-            case LEAVEOK:
-                message = appendLength("LEAVEOK"+" "+ip+" "+port);
-        }
-    }
-    
-//    public Message(MessageType type, String ip, int port, String fileNanme,
-//            int hops){
-//        switch(type){
-//            case SER:
-//                message=appendLength("SER"+" "+ip+" "+port+" "+fileNanme+
-//                        " "+hops);
-//                break;
-//        }
-//    }
-    
-    public Message(MessageType type, String ip, int port, String ip_forwarding, 
-            int port_forwarding, String fileNanme, int hops, String timeStamp){
-        switch(type){
-            case SER:
-                message=appendLengthWithOutTime("SER"+" "+ip+" "+port+" "+ip_forwarding+" "
-                        +port_forwarding+" "+fileNanme+" "+hops+" "+timeStamp);
-                break;
-        }
-    }
-    
-    public Message(MessageType type, int noOfFiles, String fileDestinationIp,
-            int fileDestinationPort, int hops, List<String> files){
-
-        switch(type){
-        
-            case SEROK: 
-            {
-                String filesString="";
-                for (String file : files) {
-                    filesString = filesString +" "+ file;
-                }
-                message=appendLength("SEROK"+" "+noOfFiles+" "+fileDestinationIp+" "+fileDestinationPort+" "+hops+" "+filesString);
-                break;
-        
-            }
         }
     }
     
