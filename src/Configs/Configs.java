@@ -13,55 +13,37 @@ public class Configs {
     public static Properties prop = new Properties();
     
     public String getServerIP(){
-        try{
-            prop.load(new FileInputStream("configs.ds"));
-            return prop.getProperty("SERVER_IP");
-        }catch(IOException ex){
-            System.out.println(ex.getMessage());
-            return null;
-        }
+        return getStringProperty("SERVER_IP");         
     }
     
     public int getServerPort(){
-        try{
-            prop.load(new FileInputStream("configs.ds"));
-            return Integer.valueOf(prop.getProperty("SERVER_PORT"));
-        }catch(ClassCastException ex){
-            //System.out.println(ex.getMessage());
-            return -1;
-        }catch(IOException ex){
-            //System.out.println(ex.getMessage());
-            return -1;
-        }
+        return getIntegerProperty("SERVER_PORT");         
     }
     
     public String getClientIP(){
-        try{
-            prop.load(new FileInputStream("configs.ds"));
-            return prop.getProperty("CLIENT_IP");
-        }catch(IOException ex){
-            System.out.println(ex.getMessage());
-            return null;
-        }
+        return getStringProperty("CLIENT_IP");        
     }
     
     public int getClientPort(){
-        try{
-            prop.load(new FileInputStream("configs.ds"));
-            return Integer.valueOf(prop.getProperty("CLIENT_PORT"));
-        }catch(ClassCastException ex){
-            //System.out.println(ex.getMessage());
-            return -1;
-        }catch(IOException ex){
-            //System.out.println(ex.getMessage());
-            return -1;
-        }
+        return getIntegerProperty("CLIENT_PORT");        
     }
     
     public int getTimeout(){
+        return getIntegerProperty("TIME_OUT");        
+    }
+    
+    public String getClientName(){
+        return getStringProperty("CLIENT_NAME");        
+    }
+    
+    public int getMaxNumberOfNeighbours(){
+        return getIntegerProperty("MAX_NUMBER_OF_NEIGHBORS");        
+    }
+    
+    private int getIntegerProperty(String propertyName){
         try{
             prop.load(new FileInputStream("configs.ds"));
-            return Integer.valueOf(prop.getProperty("TIME_OUT"));
+            return Integer.valueOf(prop.getProperty(propertyName));
         }catch(ClassCastException ex){
             //System.out.println(ex.getMessage());
             return -1;
@@ -71,10 +53,10 @@ public class Configs {
         }
     }
     
-     public String getClientName(){
+     public String getStringProperty(String propertyName){
         try{
             prop.load(new FileInputStream("configs.ds"));
-            return prop.getProperty("CLIENT_NAME");
+            return prop.getProperty(propertyName);
         }catch(IOException ex){
             System.out.println(ex.getMessage());
             return null;
