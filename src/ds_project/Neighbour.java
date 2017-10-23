@@ -36,10 +36,23 @@ public class Neighbour {
                 .decodeInitialJoinResponse(responce);
     }
     
+    public void sendJoin(){
+        String message = (new Message(MessageType.JOIN, ip, port))
+                .getMessage();
+        com.send(message, ip, port,-1);
+    }
+    
     public void setCommunicator(Communicator com){
         this.com = com;
     }
 
+    public Neighbour[] getNeighbours(int size){
+        //TODO
+        // send message to the node and get required neighbours
+        Neighbour[] neighbours = null;
+        return neighbours;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 3;
