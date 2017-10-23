@@ -34,6 +34,10 @@ public class Neighbour extends Host{
         com.send(message, ip, port,-1);
     }
     
+    public void sendIsAlive(){
+        //TODO        
+    }
+    
     public void setCommunicator(Communicator com){
         this.com = com;
     }
@@ -72,14 +76,14 @@ public class Neighbour extends Host{
     /**
      * @return the isAlive
      */
-    public boolean isIsAlive() {
+    public boolean isAlive() {
         return isAlive;
     }
 
     /**
      * @param isAlive the isAlive to set
      */
-    public void setIsAlive(boolean isAlive) {
+    public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
     }
     

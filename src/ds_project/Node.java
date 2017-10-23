@@ -8,6 +8,8 @@ import helper.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -220,9 +222,34 @@ public class Node extends Host{
     
     private class NeighbourChecker implements Runnable{
 
+        private final int timeout_neighbour_checker;
+        
+        public NeighbourChecker(){
+            timeout_neighbour_checker = configs.getNeighbourSetterTimeout();
+        } 
+        
         @Override
         public void run() {
-        
+            synchronized(neighbours_list){
+                neighbours_list.stream().forEach((neighbour) -> {
+                    neighbour.setAlive(false);
+                    neighbour.sendIsAlive();
+                });
+            }
+            
+            try {
+                Thread.sleep(timeout_neighbour_checker);
+            } catch (InterruptedException ex) {
+
+            }
+            
+            synchronized(neighbours_list){
+                neighbours_list.stream().forEach((neighbour) -> {
+                    if(!neighbour.isAlive()){
+                        neighbours_list.remove(neighbour);
+                    }
+                });
+            }        
         }
     
     }
