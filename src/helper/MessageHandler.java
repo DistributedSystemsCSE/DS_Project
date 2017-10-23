@@ -39,6 +39,10 @@ public class MessageHandler implements Runnable {
         this.shouldKill = shouldKill;
     }
 
+    public void removeRoute(String ip, String port) {
+        routingTable.removeFromTable(ip, port);
+    }
+
     @Override
     public void run() {
         try {
@@ -96,16 +100,24 @@ public class MessageHandler implements Runnable {
          Distributed System
          ==================
          Join
-         length JOIN IP_address port_no
-         length JOINOK value
+         length JOIN IP_address port_no timestamp
+	 length JOINOK value IP_address port_no timestamp
 
          Leave
          length LEAVE IP_address port_no timestamp
-         length LEAVEOK value	
+	 length LEAVEOK value timestamp	
 
          Search
          length SER IP port forwarding_IP forwarding_port file_name hops timestamp
-         length SEROK no_files IP port hops timestamp filename1 filename2 ... ...
+	 length SEROK no_files IP port hops filename1 filename2 ... ... timestamp
+        
+         Requist Neighbours
+	 length NEREQ IP port count timestamp
+	 length NERRES value IP_1 port_1 IP_2 port_2 ... ... timestamp
+        
+         IsAlive
+	 length ISALIVE IP port timestamp
+	 length ALIVE IP port timestamp
          */
         try {
             String[] mes = message.split(" ");
@@ -137,7 +149,7 @@ public class MessageHandler implements Runnable {
                         }
                         String resMsg = (new Message(MessageType.JOINOK,
                                 ip, port)).getMessage();
-                        communicator.send(resMsg, ip, port, -1);
+                        communicator.sendToPeer(resMsg, ip, port);
                     }
                     break;
                 case "JOINOK":
