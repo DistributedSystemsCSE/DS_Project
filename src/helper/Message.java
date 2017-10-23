@@ -16,33 +16,54 @@ public class Message {
                 break;
             case UNREG:message=appendLength("UNREG"+" "+ip+" "+port+" "+name);
                 break;
-            case JOIN:message=appendLength("JOIN"+" "+ip+" "+port+" "+name);
+            case JOIN:message=appendLength("JOIN"+" "+ip+" "+port);
                 break;
             case JOINOK: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
                 break;
-            case FILES:
-                message = appendLength("FILES"+" "+ip+" "+port+" "+name);
+            case LEAVE: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
                 break;
-            case SER:
-            {
-                String fileName = name;
-                message=appendLength("SER"+" "+ip+" "+port+" "+fileName);
+            case LEAVEOK: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
                 break;
-            }
-            case INQUIRE: message= appendLength("INQUIRE"+" "+ip+" "+port);
-                break; 
-            case INQUIREOK: message= appendLength("INQUIREOK"+" "+ip+" "+port);
+            case SER: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
                 break;
-            case LEAVE:
-                String peerIpPort = name;
-                if(peerIpPort!=null){
-                    message=appendLength("LEAVE"+" "+ip+" "+port+" "+name);
-                }else{
-                    message=appendLength("LEAVE"+" "+ip+" "+port+" "+"CHILD-LEAVING");
-                }
+            case SEROK: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
+                break;
+            case NEREQ: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
+                break;
+            case NERRES: message=appendLength("JOINOK"+" "+ip+" "+port+" "+0);
+                break;
+//            case FILES:
+//                message = appendLength("FILES"+" "+ip+" "+port+" "+name);
+//                break;
+//            case SER:
+//            {
+//                String fileName = name;
+//                message=appendLength("SER"+" "+ip+" "+port+" "+fileName);
+//                break;
+//            }
+//            case INQUIRE: message= appendLength("INQUIRE"+" "+ip+" "+port);
+//                break; 
+//            case INQUIREOK: message= appendLength("INQUIREOK"+" "+ip+" "+port);
+//                break;
+//            case LEAVE:
+//                String peerIpPort = name;
+//                if(peerIpPort!=null){
+//                    message=appendLength("LEAVE"+" "+ip+" "+port+" "+name);
+//                }else{
+//                    message=appendLength("LEAVE"+" "+ip+" "+port+" "+"CHILD-LEAVING");
+//                }
+//                break;
+        }
+    }
+    
+    public Message(MessageType type, int value, String ip, int port){
+        switch(type){
+            case JOINOK: message=appendLength("JOINOK"+" "+value+" "+ip+" "+port);
                 break;
         }
     }
+    
+    
     
     public Message(MessageType type, int success){
         switch(type){
@@ -72,11 +93,41 @@ public class Message {
         }
     }
     
-    public Message(MessageType type, String ip, int port, String fileNanme, int hops){
+//    public Message(MessageType type, String ip, int port, String fileNanme,
+//            int hops){
+//        switch(type){
+//            case SER:
+//                message=appendLength("SER"+" "+ip+" "+port+" "+fileNanme+
+//                        " "+hops);
+//                break;
+//        }
+//    }
+    
+    public Message(MessageType type, String ip, int port, String ip_forwarding, 
+            int port_forwarding, String fileNanme, int hops, String timeStamp){
         switch(type){
             case SER:
-                message=appendLength("SER"+" "+ip+" "+port+" "+fileNanme+" "+hops);
+                message=appendLengthWithOutTime("SER"+" "+ip+" "+port+" "+ip_forwarding+" "
+                        +port_forwarding+" "+fileNanme+" "+hops+" "+timeStamp);
                 break;
+        }
+    }
+    
+    public Message(MessageType type, int noOfFiles, String fileDestinationIp,
+            int fileDestinationPort, int hops, ArrayList<String> files){
+
+        switch(type){
+        
+            case SEROK: 
+            {
+                String filesString="";
+                for (String file : files) {
+                    filesString = filesString +" "+ file;
+                }
+                message=appendLength("SEROK"+" "+noOfFiles+" "+fileDestinationIp+" "+fileDestinationPort+" "+hops+" "+filesString);
+                break;
+        
+            }
         }
     }
     
@@ -99,7 +150,7 @@ public class Message {
         }
     }
     
-        public Message(MessageType type, int noOfFiles, String fileDestinationIp, int fileDestinationPort, int hops, String fileString,String intermediateIp,int intermediatePort){
+    public Message(MessageType type, int noOfFiles, String fileDestinationIp, int fileDestinationPort, int hops, String fileString,String intermediateIp,int intermediatePort){
         switch(type){
         
             case SEROK: 
@@ -115,7 +166,30 @@ public class Message {
     }
     
     private String appendLength(String message){
-         int messageLength = message.length()+4+1;
+        long currentTime = System.currentTimeMillis();
+        String currentTime_s=String.valueOf(currentTime);
+        int messageLength = message.length()+4+2+currentTime_s.length();
+        String messageLengthString = Integer.toString(messageLength);
+        String prefix="";
+        switch(messageLengthString.length()){
+            case 1: prefix="000"+messageLengthString+" ";
+                break;
+            case 2:prefix = "00"+messageLengthString+" ";
+                break;
+            case 3:prefix="0"+messageLengthString+" ";
+                break;
+            case 4: prefix=messageLengthString+" ";
+                break;
+        }
+        message=prefix+message+" "+currentTime_s;
+        
+        return message;
+    } 
+    
+    private String appendLengthWithOutTime(String message){
+//        long currentTime = System.currentTimeMillis();
+//        String currentTime_s=String.valueOf(currentTime);
+        int messageLength = message.length()+4+1;
         String messageLengthString = Integer.toString(messageLength);
         String prefix="";
         switch(messageLengthString.length()){
@@ -131,6 +205,6 @@ public class Message {
         message=prefix+message;
         
         return message;
-    }    
+    } 
      
 }
