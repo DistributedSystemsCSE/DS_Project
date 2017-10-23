@@ -184,6 +184,33 @@ public class MessageHandler implements Runnable {
                         }
                     }
                     break;
+                case "NEREQ":
+                    ip = mes[2];
+                    port = Integer.parseInt(mes[3]);
+                    if (!addMessage(message)) {
+                        int count = Integer.parseInt(mes[4]);
+                        Neighbour[] neighbours = node.getRandomNeighbours(count);
+                        int neighboursCount = neighbours.length;
+                        String[] ipList = new String[neighboursCount];
+                        int[] portList = new int[neighboursCount];
+                        int i = 0;
+                        for (Neighbour nb : neighbours) {
+                            ipList[i] = nb.getIp();
+                            portList[i++] = nb.getPort();
+                        }
+
+                        String resMsg = (new Message(MessageType.NERRES,
+                                neighboursCount,
+                                ipList,
+                                portList)).getMessage();
+                        communicator.sendToPeer(resMsg, ip, port);
+                    }
+                    break;
+                case "NERRES":
+                    if (!addMessage(message)) {
+
+                    }
+                    break;
                 case "LEAVE":
                     break;
                 case "LEAVEOK":
