@@ -1,5 +1,6 @@
 package helper;
 
+import ds_project.Communicator;
 import ds_project.Neighbour;
 import ds_project.Node;
 import java.util.Arrays;
@@ -16,13 +17,16 @@ import java.util.logging.Logger;
 public class MessageHandler implements Runnable {
 
     private Node node;
-    public static List<String> message_list;
+    private List<String> message_list;
     private BlockingQueue<String> message_queue;
     private final int MAX_QUEUE_SIZE = 100;
     private boolean shouldKill = false;
+    private RoutingTable routingTable = new RoutingTable();
+    private Communicator communicator;
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
+        communicator = Communicator.getInstance();
     }
 
     public void setNode(Node node) {
@@ -52,8 +56,8 @@ public class MessageHandler implements Runnable {
             System.err.println(e);
         }
     }
-    
-    public void putMessage(String msg){
+
+    public void putMessage(String msg) {
         try {
             message_queue.put(msg);
         } catch (InterruptedException ex) {
@@ -82,6 +86,9 @@ public class MessageHandler implements Runnable {
 
         try {
             String[] mes = message.split(" ");
+            int port;
+            String port_s;
+            String ip;
 
             switch (mes[1]) {
                 case "SER":
@@ -96,20 +103,31 @@ public class MessageHandler implements Runnable {
                     }
                     break;
                 case "JOIN":
+                    port = Integer.parseInt(mes[3]);
+                    port_s = mes[3];
+                    ip = mes[2];
                     if (!addMessage(message)) {
-//                        if (addNeighbours(new Neighbour(mes[2], mes[3]))) {
-//
-//                        }
+                        if (node.addNeighbours(new Neighbour(ip, port))) {
+                            routingTable.updateTable(ip, port_s, ip, port_s, "1");
+                        }
+                        String resMsg = (new Message(MessageType.JOINOK, ip, port)).getMessage();
+                        communicator.send(resMsg, ip, port, -1);
                     }
                     break;
                 case "JOINOK":
-                    addMessage(message);
+                    port = Integer.parseInt(mes[3]);
+                    port_s = mes[3];
+                    ip = mes[2];
+                    if (!addMessage(message)) {
+                        if (node.addNeighbours(new Neighbour(ip, port))) {
+                            routingTable.updateTable(ip, port_s, ip, port_s, "1");
+                        }
+                    }
                     break;
                 case "LEAVE":
                     break;
                 case "LEAVEOK":
                     break;
-
                 case "SEROK":
                     break;
                 case "ERROR":
