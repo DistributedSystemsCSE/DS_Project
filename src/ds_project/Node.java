@@ -6,10 +6,11 @@ import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 
 
 /**
@@ -154,6 +155,39 @@ public class Node extends Host{
         return neighbour;
     }
     
+    public Neighbour[] getRandomNeighbours(int size) {
+        int list_size = neighbours_list.size();
+        if(size<list_size){
+            Neighbour[] neighbours = new Neighbour[size];
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            for (int i=1; i<list_size; i++) {
+                list.add(i);
+            }
+            Collections.shuffle(list);
+            for (int i=0; i<size; i++) {
+                neighbours[i] = neighbours_list.get(list.get(i));
+            }
+            return neighbours;
+        }else{
+            return neighbours_list.toArray(new Neighbour[0]);
+        }
+    }
+    
+    public void sendToNeighboursExcept(String message,Neighbour neighbour){
+        
+        //TODO
+        //test the method....
+        
+        List<Neighbour> neighbours_except = neighbours_list.stream()               
+                .filter(neighbour_ -> !neighbour.equals(neighbour_))    
+                .collect(Collectors.toList()); 
+        
+        neighbours_except.stream().forEach((neighbour_) -> {
+                    neighbour_.sendMessage(message);                    
+                });
+        
+    }
+    
     public boolean unregister(){
         String str = (new Message(MessageType.UNREG, ip,port, name))
                 .getMessage();  
@@ -201,7 +235,7 @@ public class Node extends Host{
                         Thread.sleep(timeout_neighbour);
                         continue;
                     } catch (InterruptedException ex) {
-                        //Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+                        
                     }
                 }
                 Neighbour[] new_neighbours =  getRandomNeighbour()
@@ -213,7 +247,7 @@ public class Node extends Host{
                 try {
                     Thread.sleep(timeout_neighbour);                    
                 } catch (InterruptedException ex) {
-                    //Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+                    
                 }
             }
         }

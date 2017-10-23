@@ -34,6 +34,10 @@ public class Neighbour extends Host{
         com.send(message, ip, port,-1);
     }
     
+    public void sendMessage(String message){        
+        com.send(message, ip, port,-1);
+    }
+    
     public void sendIsAlive(){
         //TODO        
     }
