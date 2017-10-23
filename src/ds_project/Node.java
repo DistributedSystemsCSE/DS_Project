@@ -15,9 +15,8 @@ import java.util.Random;
  *
  * @author Hareen Udayanath
  */
-public class Node implements Observer{
-    private final String ip;
-    private final int port;
+public class Node extends Host implements Observer{
+    
     private final String name;
     private final Configs configs;
     private final int timeout;
@@ -27,14 +26,17 @@ public class Node implements Observer{
     private final List<Neighbour> neighbours_list;
     
     private Node(){
+        
         configs = new Configs();
         neighbours_list = new ArrayList<>();
         name = configs.getClientName();
-        ip = configs.getClientIP();
-        port  = configs.getClientPort();
+        
         timeout = configs.getTimeout();
         max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
         randomGenerator = new Random();
+        
+        super.setIp(configs.getClientIP());
+        super.setPort(configs.getClientPort());
     }
     
     private static class InstanceHolder{
@@ -67,16 +69,24 @@ public class Node implements Observer{
         try{
             neighbours = ResponseHandler.getInstance()
                 .decodeRegisterResponse(responce);
-        }catch(BsRegisterException ex){
-            return false;
+        }catch(BsRegisterException ex){            
             System.out.println(ex.getMessage());
+            return false;
         }
         //System.out.println("Size: "+neighbours.length);
         
         if(neighbours.length==0){
             return true;
         }else if(neighbours.length==1){
-            if(!neighbours[0].sendJoinAsFirstNeighbour()){
+            boolean connected = false;
+            try{
+                connected = neighbours[0].sendJoinAsFirstNeighbour();
+            }catch(BsRegisterException ex){
+                System.out.println(ex.getMessage());
+                unregister();
+                return false;
+            }
+            if(!connected){
                 unregister();
                 return false;
             }
@@ -109,9 +119,10 @@ public class Node implements Observer{
     
     private void setNeighbours(){
         int size = max_number_of_neighbours - neighbours_list.size();
-//        for(int){
-//        
-//        }
+        for(int i = 0 ; i < size ; i++){
+            Neighbour neighbour = getRandomNeighbour();
+            Neighbour[] new_neighbour =  neighbour.getNeighbours(size);
+        }
     }
     
     public Neighbour getRandomNeighbour(){
@@ -125,8 +136,16 @@ public class Node implements Observer{
                 .getMessage();  
         com.sendToBS(str);
         String responce = com.receiveFromBS();
-        return ResponseHandler.getInstance()
-                .decodeUnregisterResponse(responce);
+        
+        try{
+            boolean isUnregistered = ResponseHandler.getInstance()
+                    .decodeUnregisterResponse(responce);
+            return isUnregistered;
+        }catch(BsRegisterException ex){
+            System.out.println(ex.getMessage());
+            return false;
+        }
+        
     }
     
     public boolean addNeighbours(Neighbour neb){
