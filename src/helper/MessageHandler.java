@@ -9,12 +9,12 @@ import java.util.List;
  *
  * @author Buddhi
  */
-public class ResponseHandler {
+public class MessageHandler {
 
     private Node node;
     public static List<String> message_list;
 
-    private ResponseHandler() {
+    private MessageHandler() {
     }
 
     public void setNode(Node node) {
@@ -22,10 +22,10 @@ public class ResponseHandler {
     }
     
     private static class InstanceHolder{
-        static ResponseHandler instance = new ResponseHandler();
+        static MessageHandler instance = new MessageHandler();
     }
     
-    public static ResponseHandler getInstance(){
+    public static MessageHandler getInstance(){
         return InstanceHolder.instance;
     }
 

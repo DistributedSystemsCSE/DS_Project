@@ -3,7 +3,7 @@ package ds_project;
 import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
-import helper.ResponseHandler;
+import helper.MessageHandler;
 import java.util.Objects;
 
 /**
@@ -23,7 +23,7 @@ public class Neighbour extends Host{
                 .getMessage();
         com.send(message, getIp(), getPort(),-1);
         String responce = com.receiveWithTimeout();
-        return ResponseHandler.getInstance()
+        return MessageHandler.getInstance()
                 .decodeInitialJoinResponse(responce);
     }
     
