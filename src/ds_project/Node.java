@@ -61,7 +61,7 @@ public class Node extends Host{
             neighbours = MessageHandler.getInstance()
                 .decodeRegisterResponse(responce);
         }catch(BsRegisterException ex){            
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             return false;
         }
         //System.out.println("Size: "+neighbours.length);
@@ -137,8 +137,8 @@ public class Node extends Host{
         if(!connected)
             return false;
         
-        Thread setNeighbours = new Thread(new NeighboursSetter());
-        setNeighbours.start();
+        Thread neighbourSetter = new Thread(new NeighbourSetter());
+        neighbourSetter.start();
         return true;
     }
     
@@ -163,7 +163,7 @@ public class Node extends Host{
                     .decodeUnregisterResponse(responce);
             return isUnregistered;
         }catch(BsRegisterException ex){
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             return false;
         }
         
@@ -178,11 +178,11 @@ public class Node extends Host{
         return true;
     }
     
-    private class NeighboursSetter implements Runnable{
+    private class NeighbourSetter implements Runnable{
 
-        private int timeout_neighbour;
+        private final int timeout_neighbour;
         
-        public NeighboursSetter(){
+        public NeighbourSetter(){
             timeout_neighbour = configs.getNeighbourSetterTimeout();
         }
         
@@ -216,5 +216,14 @@ public class Node extends Host{
             }
         }
         
+    }
+    
+    private class NeighbourChecker implements Runnable{
+
+        @Override
+        public void run() {
+        
+        }
+    
     }
 }
