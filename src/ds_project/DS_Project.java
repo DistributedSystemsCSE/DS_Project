@@ -1,8 +1,8 @@
 package ds_project;
 
 import Configs.Configs;
-import help.Message;
-import help.MessageType;
+import helper.Message;
+import helper.MessageType;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

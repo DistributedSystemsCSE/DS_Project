@@ -1,8 +1,8 @@
 package ds_project;
 
-import help.Message;
-import help.MessageType;
-import help.ResponseHandler;
+import helper.Message;
+import helper.MessageType;
+import helper.ResponseHandler;
 import java.util.Objects;
 
 /**
