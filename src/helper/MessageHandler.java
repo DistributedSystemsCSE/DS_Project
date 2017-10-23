@@ -3,6 +3,7 @@ package helper;
 import ds_project.Communicator;
 import ds_project.Neighbour;
 import ds_project.Node;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -21,14 +22,13 @@ public class MessageHandler implements Runnable {
     private boolean shouldKill = false;
     private RoutingTable routingTable = new RoutingTable();
     private final Communicator communicator;
+    private final FileHandler fileHandler;
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
         communicator = Communicator.getInstance();
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
+        fileHandler = new FileHandler();
+        node = Node.getInstance();
     }
 
     public boolean isShouldKill() {
@@ -101,23 +101,23 @@ public class MessageHandler implements Runnable {
          ==================
          Join
          length JOIN IP_address port_no timestamp
-	 length JOINOK value IP_address port_no timestamp
+         length JOINOK value IP_address port_no timestamp
 
          Leave
          length LEAVE IP_address port_no timestamp
-	 length LEAVEOK value timestamp	
+         length LEAVEOK value timestamp	
 
          Search
          length SER IP port forwarding_IP forwarding_port file_name hops timestamp
-	 length SEROK no_files IP port hops filename1 filename2 ... ... timestamp
+         length SEROK no_files IP port hops filename1 filename2 ... ... timestamp
         
          Requist Neighbours
-	 length NEREQ IP port count timestamp
-	 length NERRES value IP_1 port_1 IP_2 port_2 ... ... timestamp
+         length NEREQ IP port count timestamp
+         length NERRES value IP_1 port_1 IP_2 port_2 ... ... timestamp
         
          IsAlive
-	 length ISALIVE IP port timestamp
-	 length ALIVE IP port timestamp
+         length ISALIVE IP port timestamp
+         length ALIVE IP port timestamp
          */
         try {
             String[] mes = message.split(" ");
@@ -126,18 +126,41 @@ public class MessageHandler implements Runnable {
 
             switch (mes[1]) {
                 case "SER":
-                    port = Integer.parseInt(mes[3]);
                     ip = mes[2];
-                    String[] newMes = null;
-                    Arrays.copyOfRange(newMes, 0, (mes.length - 2));
-                    String uniqMes = String.join("", newMes);
+                    port = Integer.parseInt(mes[3]);
+                    String forwardingIP = mes[4];
+                    int forwardingPort = Integer.parseInt(mes[5]);
+                    int hops = Integer.parseInt(mes[7]);
+                    String uniqMes = mes[0] + mes[1] + mes[2] + mes[3] + mes[6] + mes[8];
                     if (!addMessage(uniqMes)) {
                         //update routing table
                         routingTable.updateTable(ip, port,
-                                ip, port, (Integer.parseInt(mes[7]) + 1));
+                                forwardingIP, forwardingPort, (hops + 1));
 
-                        //check for files and send responce
-                        //broadcast mesagge
+                        // check for files and send responce
+                        String fileName = mes[6];
+                        List<String> searchFiles = fileHandler.getSimilarFileNames(fileName);
+                        int noOfFiles = searchFiles.size();
+
+                        // sent search respons
+                        String resMsg = (new Message(MessageType.SEROK,
+                                noOfFiles,
+                                ip,
+                                port,
+                                (hops + 1),
+                                searchFiles)).getMessage();
+                        communicator.sendToPeer(resMsg, ip, port);
+
+                        // broadcast mesagge searchFile
+                        String broadcastMsg = (new Message(MessageType.SER,
+                                ip,
+                                port,
+                                node.getIp(),
+                                node.getPort(),
+                                fileName,
+                                (hops + 1),
+                                mes[8])).getMessage();
+                        node.sendToNeighboursExcept(broadcastMsg, (new Neighbour(forwardingIP, forwardingPort)));
                     }
                     break;
                 case "JOIN":
