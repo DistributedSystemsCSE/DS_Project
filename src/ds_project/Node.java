@@ -4,7 +4,7 @@ import Configs.Configs;
 import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
-import helper.ResponseHandler;
+import helper.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -69,7 +69,7 @@ public class Node extends Host implements Observer{
         com.sendToBS(str);
         String responce = com.receiveFromBS();
         try{
-            neighbours = ResponseHandler.getInstance()
+            neighbours = MessageHandler.getInstance()
                 .decodeRegisterResponse(responce);
         }catch(BsRegisterException ex){            
             System.out.println(ex.getMessage());
@@ -138,7 +138,7 @@ public class Node extends Host implements Observer{
         String responce = com.receiveFromBS();
         
         try{
-            boolean isUnregistered = ResponseHandler.getInstance()
+            boolean isUnregistered = MessageHandler.getInstance()
                     .decodeUnregisterResponse(responce);
             return isUnregistered;
         }catch(BsRegisterException ex){
