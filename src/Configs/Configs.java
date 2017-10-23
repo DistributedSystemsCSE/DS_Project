@@ -36,6 +36,10 @@ public class Configs {
         return getIntegerProperty("TIME_OUT_NEIGHBOUR_SETTER");        
     }
     
+    public int getNeighbourCheckerTimeout(){
+        return getIntegerProperty("TIME_OUT_NEIGHBOUR_CHECKER");        
+    }
+    
     public String getClientName(){
         return getStringProperty("CLIENT_NAME");        
     }
