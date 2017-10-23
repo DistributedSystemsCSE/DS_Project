@@ -1,6 +1,7 @@
 package ds_project;
 
 import Configs.Configs;
+import helper.MessageHandler;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -12,15 +13,16 @@ import java.util.Observable;
  *
  * @author Hareen Udayanath
  */
-public class Communicator extends Observable implements Runnable{
+public class Communicator implements Runnable{
     private final String serverIP;
     private final String clientIP;
     private final int serverPort;
     private final int clientPort;
+    private boolean shouldKill = false;
     
     private final Configs configs;
-    private final int timeout;
-    private String message;
+    private final int timeout;    
+    private final MessageHandler messageHandler;
     
     private Communicator(){
         configs = new Configs();
@@ -28,7 +30,22 @@ public class Communicator extends Observable implements Runnable{
         serverIP = configs.getServerIP();
         clientIP = configs.getClientIP();
         clientPort = configs.getClientPort();        
-        serverPort = configs.getServerPort();        
+        serverPort = configs.getServerPort();  
+        messageHandler = MessageHandler.getInstance();
+    }
+
+    /**
+     * @return the shouldKill
+     */
+    public boolean isShouldKill() {
+        return shouldKill;
+    }
+
+    /**
+     * @param shouldKill the shouldKill to set
+     */
+    public void setShouldKill(boolean shouldKill) {
+        this.shouldKill = shouldKill;
     }
     
     private static class InstanceHolder{
@@ -41,19 +58,18 @@ public class Communicator extends Observable implements Runnable{
 
     @Override
     public void run() {
-        while(true){            
+        
+        while(!shouldKill){            
             String responce = receive(clientPort, false);
-            if(responce != null){
-                this.message = responce;                
-                setChanged();
-                notifyObservers();
+            if(responce != null){                               
+                messageHandler.putMessage(responce);
             }            
         }
     }   
     
-//    public void sendToNeighbour(String message, String peerIp, int peerPort){
-//        send(message,peerIp,peerPort);
-//    }
+    public void sendToPeer(String message, String peerIp, int peerPort){
+        send(message,peerIp,peerPort,-1);
+    }
     
     public String receiveWithTimeout(){
         return receive(clientPort, true);        
@@ -67,6 +83,7 @@ public class Communicator extends Observable implements Runnable{
         send(str,serverIP,serverPort,clientPort);        
     }
     
+      
     public String receiveFromBS(){
        return receive(clientPort, false);
     }
@@ -121,12 +138,5 @@ public class Communicator extends Observable implements Runnable{
         }       
     }
     
-    public void addNode(Node node){    
-        this.addObserver(node);
-    }
-    
-    public String getMessage(){
-        return this.message;
-    }
     
 }

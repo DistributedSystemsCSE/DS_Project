@@ -7,17 +7,14 @@ import helper.MessageType;
 import helper.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  *
  * @author Hareen Udayanath
  */
-public class Node extends Host implements Observer{
+public class Node extends Host{
     
     private final String name;
     private final Configs configs;
@@ -25,6 +22,7 @@ public class Node extends Host implements Observer{
     private final int max_number_of_neighbours;
     private final Random randomGenerator;
     private Communicator com = null;
+    private MessageHandler mh = null;
     private final List<Neighbour> neighbours_list;
     
     private Node(){
@@ -39,6 +37,9 @@ public class Node extends Host implements Observer{
         
         super.setIp(configs.getClientIP());
         super.setPort(configs.getClientPort());
+        
+        mh = MessageHandler.getInstance();
+        com = Communicator.getInstance();
     }
     
     private static class InstanceHolder{
@@ -48,20 +49,8 @@ public class Node extends Host implements Observer{
     public static Node getInstance(){
         return InstanceHolder.instance;
     }
-    
-    public void update(Observable obs, Object obj){  
         
-        //TODO
-        if(obs==com){
-            System.out.println(com.getMessage());
-        }
        
-    }
-    
-    public void setCommunicator(Communicator com){
-        this.com = com;
-    }
-    
     public boolean register(){
         Neighbour[] neighbours = null;
         String str = (new Message(MessageType.REG, ip,port, name))
@@ -77,7 +66,9 @@ public class Node extends Host implements Observer{
         }
         //System.out.println("Size: "+neighbours.length);
         
+                
         if(neighbours.length==0){
+            startReceiving();
             return true;
         }else if(neighbours.length==1){
             boolean connected = false;
@@ -92,25 +83,44 @@ public class Node extends Host implements Observer{
                 unregister();
                 return false;
             }
+            startReceiving();
             return true;
         }else if(neighbours.length==2){
+            startReceiving();
             if(!connectToTheNetwork(neighbours[0],neighbours[1])){
                 unregister();
+                stopReceiving();
                 return false;
             }	
             return true;
         }else if(neighbours.length==3){
+            startReceiving();
             int index_1 = randomGenerator.nextInt(neighbours.length);
             int index_2 = randomGenerator.nextInt(neighbours.length);
             //what if first two fails but third is possible		
             if(!connectToTheNetwork(neighbours[index_1],neighbours[index_2])){
                 unregister();
+                stopReceiving();
                 return false;
             }	
             return true;
         }
         
         return false;
+    }
+    
+    private void startReceiving(){
+        Thread handler = new Thread(mh);
+        Thread receiver = new Thread(com);
+        com.setShouldKill(false);
+        mh.setShouldKill(false);
+        handler.start();
+        receiver.start();
+    }
+    
+    private void stopReceiving(){
+        com.setShouldKill(true);
+        mh.setShouldKill(true);
     }
     
     private boolean connectToTheNetwork(Neighbour nb1,Neighbour nb2){
