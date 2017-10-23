@@ -38,6 +38,10 @@ public class MessageHandler implements Runnable {
     public void setShouldKill(boolean shouldKill) {
         this.shouldKill = shouldKill;
     }
+    
+    public void removeRoute(String ip, String port){
+        routingTable.removeFromTable(ip, port);
+    }
 
     @Override
     public void run() {
@@ -137,7 +141,7 @@ public class MessageHandler implements Runnable {
                         }
                         String resMsg = (new Message(MessageType.JOINOK,
                                 ip, port)).getMessage();
-                        communicator.send(resMsg, ip, port, -1);
+                        communicator.sendToPeer(resMsg, ip, port);
                     }
                     break;
                 case "JOINOK":
