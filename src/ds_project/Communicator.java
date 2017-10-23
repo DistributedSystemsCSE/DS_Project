@@ -24,7 +24,7 @@ public class Communicator extends Observable implements Runnable{
     
     private Communicator(){
         configs = new Configs();
-        timeout = configs.getTimeout();
+        timeout = configs.getReceiverTimeout();
         serverIP = configs.getServerIP();
         clientIP = configs.getClientIP();
         clientPort = configs.getClientPort();        

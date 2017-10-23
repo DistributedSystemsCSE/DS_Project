@@ -28,8 +28,12 @@ public class Configs {
         return getIntegerProperty("CLIENT_PORT");        
     }
     
-    public int getTimeout(){
-        return getIntegerProperty("TIME_OUT");        
+    public int getReceiverTimeout(){
+        return getIntegerProperty("TIME_OUT_RECEIVE");        
+    }
+    
+    public int getNeighbourSetterTimeout(){
+        return getIntegerProperty("TIME_OUT_NEIGHBOUR_SETTER");        
     }
     
     public String getClientName(){
