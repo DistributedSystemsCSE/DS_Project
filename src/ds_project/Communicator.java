@@ -14,15 +14,20 @@ import java.util.Observable;
  */
 public class Communicator extends Observable implements Runnable{
     private final String serverIP;
+    private final String clientIP;
     private final int serverPort;
-    private Configs configs;
-    private int timeout;
+    private final int clientPort;
+    
+    private final Configs configs;
+    private final int timeout;
     private String message;
     
     private Communicator(){
         configs = new Configs();
         timeout = configs.getTimeout();
         serverIP = configs.getServerIP();
+        clientIP = configs.getClientIP();
+        clientPort = configs.getClientPort();        
         serverPort = configs.getServerPort();        
     }
     
@@ -37,7 +42,7 @@ public class Communicator extends Observable implements Runnable{
     @Override
     public void run() {
         while(true){            
-            String responce = receive(configs.getClientPort(), false);
+            String responce = receive(clientPort, false);
             if(responce != null){
                 this.message = responce;                
                 setChanged();
@@ -51,20 +56,19 @@ public class Communicator extends Observable implements Runnable{
 //    }
     
     public String receiveWithTimeout(){
-        return receive(configs.getClientPort(), true);        
+        return receive(clientPort, true);        
     }
     
     public String receiveFromBeighbour(){
-        return receive(configs.getClientPort(), false);        
+        return receive(clientPort, false);        
     }
     
     public void sendToBS(String str){        
-        send(str,configs.getServerIP(),configs.getServerPort()
-                ,configs.getClientPort());        
+        send(str,serverIP,serverPort,clientPort);        
     }
     
     public String receiveFromBS(){
-       return receive(configs.getClientPort(), false);
+       return receive(clientPort, false);
     }
     
     /* 
