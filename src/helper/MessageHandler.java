@@ -19,6 +19,7 @@ public class MessageHandler implements Runnable {
     public static List<String> message_list;
     private BlockingQueue<String> message_queue;
     private final int MAX_QUEUE_SIZE = 100;
+    private boolean shouldKill = false;
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
@@ -28,12 +29,20 @@ public class MessageHandler implements Runnable {
         this.node = node;
     }
 
+    public boolean isShouldKill() {
+        return shouldKill;
+    }
+
+    public void setShouldKill(boolean shouldKill) {
+        this.shouldKill = shouldKill;
+    }
+
     @Override
     public void run() {
         try {
             String msg;
             //consuming messages until empty
-            while (true) {
+            while (!shouldKill) {
                 msg = message_queue.take();
 //                System.out.println("Consumed " + msg);
                 handle(msg);
