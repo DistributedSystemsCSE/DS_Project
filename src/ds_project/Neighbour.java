@@ -10,28 +10,18 @@ import java.util.Objects;
  *
  * @author Buddhi
  */
-public class Neighbour {
-    private final String ip;
-    private final int port;
+public class Neighbour extends Host{
+   
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
-        this.ip = ip;
-        this.port = port;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public int getPort() {
-        return port;
+        super(ip,port);        
     }
     
     public boolean sendJoinAsFirstNeighbour() throws BsRegisterException{
         String message = (new Message(MessageType.JOIN, ip, port))
                 .getMessage();
-        com.send(message, ip, port,-1);
+        com.send(message, getIp(), getPort(),-1);
         String responce = com.receiveWithTimeout();
         return ResponseHandler.getInstance()
                 .decodeInitialJoinResponse(responce);
