@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +20,7 @@ public class MessageHandler implements Runnable {
     private final int MAX_QUEUE_SIZE = 100;
     private boolean shouldKill = false;
     private RoutingTable routingTable = new RoutingTable();
-    private Communicator communicator;
+    private final Communicator communicator;
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
@@ -84,19 +82,47 @@ public class MessageHandler implements Runnable {
      */
     public void handle(String message) {
 
+        /*
+         BS_Register
+         ===========
+         length REG IP_address port_no username
+         length REGOK no_nodes IP_1 port_1 IP_2 port_2
+
+         BS_Unregister
+         =============
+         length UNREG IP_address port_no username
+         length UNROK value
+
+         Distributed System
+         ==================
+         Join
+         length JOIN IP_address port_no
+         length JOINOK value
+
+         Leave
+         length LEAVE IP_address port_no timestamp
+         length LEAVEOK value	
+
+         Search
+         length SER IP port forwarding_IP forwarding_port file_name hops timestamp
+         length SEROK no_files IP port hops timestamp filename1 filename2 ... ...
+         */
         try {
             String[] mes = message.split(" ");
             int port;
-            String port_s;
             String ip;
 
             switch (mes[1]) {
                 case "SER":
+                    port = Integer.parseInt(mes[3]);
+                    ip = mes[2];
                     String[] newMes = null;
                     Arrays.copyOfRange(newMes, 0, (mes.length - 2));
                     String uniqMes = String.join("", newMes);
                     if (!addMessage(uniqMes)) {
                         //update routing table
+                        routingTable.updateTable(ip, port,
+                                ip, port, (Integer.parseInt(mes[7]) + 1));
 
                         //check for files and send responce
                         //broadcast mesagge
@@ -104,23 +130,22 @@ public class MessageHandler implements Runnable {
                     break;
                 case "JOIN":
                     port = Integer.parseInt(mes[3]);
-                    port_s = mes[3];
                     ip = mes[2];
                     if (!addMessage(message)) {
                         if (node.addNeighbours(new Neighbour(ip, port))) {
-                            routingTable.updateTable(ip, port_s, ip, port_s, "1");
+                            routingTable.updateTable(ip, port, ip, port, 1);
                         }
-                        String resMsg = (new Message(MessageType.JOINOK, ip, port)).getMessage();
+                        String resMsg = (new Message(MessageType.JOINOK,
+                                ip, port)).getMessage();
                         communicator.send(resMsg, ip, port, -1);
                     }
                     break;
                 case "JOINOK":
                     port = Integer.parseInt(mes[3]);
-                    port_s = mes[3];
                     ip = mes[2];
                     if (!addMessage(message)) {
                         if (node.addNeighbours(new Neighbour(ip, port))) {
-                            routingTable.updateTable(ip, port_s, ip, port_s, "1");
+                            routingTable.updateTable(ip, port, ip, port, 1);
                         }
                     }
                     break;
@@ -159,26 +184,32 @@ public class MessageHandler implements Runnable {
      *
      * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
      */
-    public Neighbour[] decodeRegisterResponse(String message) throws BsRegisterException {
+    public Neighbour[] decodeRegisterResponse(String message)
+            throws BsRegisterException {
 
         String[] mes = message.split(" ");
         int no_nodes = Integer.parseInt(mes[2]);
         if (no_nodes < 9996) {
             Neighbour[] neighbour = new Neighbour[no_nodes];
             for (int n = 0; n < no_nodes; n++) {
-                neighbour[n] = new Neighbour(mes[(n * 2) + 3], Integer.parseInt(mes[(n * 2) + 4]));
+                neighbour[n] = new Neighbour(mes[(n * 2) + 3],
+                        Integer.parseInt(mes[(n * 2) + 4]));
             }
             return neighbour;
         } else {
             switch (no_nodes) {
                 case 9996:
-                    throw new BsRegisterException("failed, can’t register. BS full");
+                    throw new BsRegisterException("failed, can’t register."
+                            + " BS full");
                 case 9997:
-                    throw new BsRegisterException("failed, registered to another user, try a different IP and port");
+                    throw new BsRegisterException("failed, registered"
+                            + " to another user, try a different IP and port");
                 case 9998:
-                    throw new BsRegisterException("failed, already registered to you, unregister first");
+                    throw new BsRegisterException("failed, already registered"
+                            + " to you, unregister first");
                 case 9999:
-                    throw new BsRegisterException("failed, there is some error in the command");
+                    throw new BsRegisterException("failed, there is some error"
+                            + " in the command");
             }
         }
         return null;
@@ -190,12 +221,14 @@ public class MessageHandler implements Runnable {
      *
      * length JOINOK value
      */
-    public boolean decodeInitialJoinResponse(String message) throws BsRegisterException {
+    public boolean decodeInitialJoinResponse(String message)
+            throws BsRegisterException {
         try {
             String[] mes = message.split(" ");
             return mes[1].equals("JOINOK") && mes[1].equals("0");
         } catch (Exception e) {
-            throw new BsRegisterException("Error while adding new node to routing table");
+            throw new BsRegisterException("Error while adding new node "
+                    + "to routing table");
         }
     }
 
@@ -205,12 +238,15 @@ public class MessageHandler implements Runnable {
      *
      * length UNROK value
      */
-    public boolean decodeUnregisterResponse(String message) throws BsRegisterException {
+    public boolean decodeUnregisterResponse(String message)
+            throws BsRegisterException {
         try {
             String[] mes = message.split(" ");
             return mes[1].equals("UNROK") && mes[1].equals("0");
         } catch (Exception e) {
-            throw new BsRegisterException("Error while unregistering. IP and port may not be in the registry or command is incorrect");
+            throw new BsRegisterException("Error while unregistering. "
+                    + "IP and port may not be in the registry "
+                    + "or command is incorrect");
         }
     }
 }
