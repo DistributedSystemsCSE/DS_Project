@@ -4,28 +4,60 @@ import ds_project.Neighbour;
 import ds_project.Node;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Buddhi
  */
-public class MessageHandler {
+public class MessageHandler implements Runnable {
 
     private Node node;
     public static List<String> message_list;
+    private BlockingQueue<String> message_queue;
+    private final int MAX_QUEUE_SIZE = 100;
 
     private MessageHandler() {
+        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     }
 
     public void setNode(Node node) {
         this.node = node;
     }
-    
-    private static class InstanceHolder{
-        static MessageHandler instance = new MessageHandler();
+
+    @Override
+    public void run() {
+        try {
+            String msg;
+            //consuming messages until empty
+            while (true) {
+                msg = message_queue.take();
+//                System.out.println("Consumed " + msg);
+                handle(msg);
+                Thread.sleep(10);
+            }
+        } catch (InterruptedException e) {
+            System.err.println(e);
+        }
     }
     
-    public static MessageHandler getInstance(){
+    public void putMessage(String msg){
+        try {
+            message_queue.put(msg);
+        } catch (InterruptedException ex) {
+            System.err.println(ex);
+        }
+    }
+
+    private static class InstanceHolder {
+
+        static MessageHandler instance = new MessageHandler();
+    }
+
+    public static MessageHandler getInstance() {
         return InstanceHolder.instance;
     }
 
@@ -33,11 +65,9 @@ public class MessageHandler {
      * @param message
      *
      *
-     * length JOINOK value 
-     * length LEAVE IP_address port_no 
-     * length LEAVEOK value
-     * length SER IP port file_name hops 
-     * length SEROK no_files IP port hops filename1 filename2 length ERROR
+     * length JOINOK value length LEAVE IP_address port_no length LEAVEOK value
+     * length SER IP port file_name hops length SEROK no_files IP port hops
+     * filename1 filename2 length ERROR
      */
     public void handle(String message) {
 
@@ -49,16 +79,11 @@ public class MessageHandler {
                     String[] newMes = null;
                     Arrays.copyOfRange(newMes, 0, (mes.length - 2));
                     String uniqMes = String.join("", newMes);
-                    if(!addMessage(uniqMes)){
+                    if (!addMessage(uniqMes)) {
                         //update routing table
-                        
-                        
+
                         //check for files and send responce
-                        
-                        
                         //broadcast mesagge
-                        
-                        
                     }
                     break;
                 case "JOIN":
@@ -104,22 +129,21 @@ public class MessageHandler {
     /**
      * @param message
      * @throws helper.BsRegisterException
-     * 
+     *
      * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
      */
     public Neighbour[] decodeRegisterResponse(String message) throws BsRegisterException {
-        
+
         String[] mes = message.split(" ");
         int no_nodes = Integer.parseInt(mes[2]);
-        if(no_nodes<9996){
+        if (no_nodes < 9996) {
             Neighbour[] neighbour = new Neighbour[no_nodes];
             for (int n = 0; n < no_nodes; n++) {
                 neighbour[n] = new Neighbour(mes[(n * 2) + 3], Integer.parseInt(mes[(n * 2) + 4]));
             }
             return neighbour;
-        }
-        else{
-            switch(no_nodes){
+        } else {
+            switch (no_nodes) {
                 case 9996:
                     throw new BsRegisterException("failed, can’t register. BS full");
                 case 9997:
@@ -131,12 +155,12 @@ public class MessageHandler {
             }
         }
         return null;
-    }    
-    
+    }
+
     /**
      * @param message
      * @throws BsRegisterException
-     * 
+     *
      * length JOINOK value
      */
     public boolean decodeInitialJoinResponse(String message) throws BsRegisterException {
@@ -147,11 +171,11 @@ public class MessageHandler {
             throw new BsRegisterException("Error while adding new node to routing table");
         }
     }
-    
+
     /**
      * @param message
      * @throws BsRegisterException
-     * 
+     *
      * length UNROK value
      */
     public boolean decodeUnregisterResponse(String message) throws BsRegisterException {
