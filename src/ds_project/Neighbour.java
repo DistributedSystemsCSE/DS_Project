@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class Neighbour extends Host{
    
+    private boolean isAlive = false;
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
@@ -66,6 +67,20 @@ public class Neighbour extends Host{
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return the isAlive
+     */
+    public boolean isIsAlive() {
+        return isAlive;
+    }
+
+    /**
+     * @param isAlive the isAlive to set
+     */
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
     }
     
     

@@ -99,6 +99,7 @@ public class Communicator implements Runnable{
                 socket = new DatagramSocket();
             else
                 socket = new DatagramSocket(port); 
+            
             if(isTimeout)
                 socket.setSoTimeout(timeout);
             
