@@ -94,9 +94,20 @@ public class Node extends Host implements Observer{
             }
             return true;
         }else if(neighbours.length==2){
-        
+            if(!connectToTheNetwork(neighbours[0],neighbours[1])){
+                unregister();
+                return false;
+            }	
+            return true;
         }else if(neighbours.length==3){
-        
+            int index_1 = randomGenerator.nextInt(neighbours.length);
+            int index_2 = randomGenerator.nextInt(neighbours.length);
+            //what if first two fails but third is possible		
+            if(!connectToTheNetwork(neighbours[index_1],neighbours[index_2])){
+                unregister();
+                return false;
+            }	
+            return true;
         }
         
         return false;
