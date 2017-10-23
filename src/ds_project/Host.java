@@ -1,12 +1,14 @@
 package ds_project;
 
+import java.util.Objects;
+
 /**
  *
  * @author Hareen Udayanath
  */
 public class Host {
-    private String ip;
-    private int port;
+    String ip;
+    int port;
     
     public Host(){
     }
@@ -42,5 +44,30 @@ public class Host {
     public void setPort(int port) {
         this.port = port;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Host other = (Host) obj;
+        if (!Objects.equals(this.ip, other.ip)) {
+            return false;
+        }
+        if (this.port != other.port) {
+            return false;
+        }
+        return true;
+    }
+    
     
 }
