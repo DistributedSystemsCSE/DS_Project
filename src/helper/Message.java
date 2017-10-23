@@ -1,6 +1,7 @@
 package helper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -114,7 +115,7 @@ public class Message {
     }
     
     public Message(MessageType type, int noOfFiles, String fileDestinationIp,
-            int fileDestinationPort, int hops, ArrayList<String> files){
+            int fileDestinationPort, int hops, List<String> files){
 
         switch(type){
         
