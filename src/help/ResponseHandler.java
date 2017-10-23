@@ -96,18 +96,30 @@ public class ResponseHandler {
      * @return
      *
      * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
+     * @throws help.BsRegisterException
      */
-    public Neighbour[] decodeRegisterResponse(String message) {
-        try {
-            String[] mes = message.split(" ");
-            int no_nodes = Integer.parseInt(mes[2]);
+    public Neighbour[] decodeRegisterResponse(String message) throws BsRegisterException {
+        
+        String[] mes = message.split(" ");
+        int no_nodes = Integer.parseInt(mes[2]);
+        if(no_nodes<9996){
             Neighbour[] neighbour = new Neighbour[no_nodes];
             for (int n = 0; n < no_nodes; n++) {
                 neighbour[n] = new Neighbour(mes[(n * 2) + 3], Integer.parseInt(mes[(n * 2) + 4]));
             }
             return neighbour;
-        } catch (Exception e) {
-            System.err.println(e);
+        }
+        else{
+            switch(no_nodes){
+                case 9996:
+                    throw new BsRegisterException("failed, can’t register. BS full");
+                case 9997:
+                    throw new BsRegisterException("failed, registered to another user, try a different IP and port");
+                case 9998:
+                    throw new BsRegisterException("failed, already registered to you, unregister first");
+                case 9999:
+                    throw new BsRegisterException("failed, there is some error in the command");
+            }
         }
         return null;
     }
