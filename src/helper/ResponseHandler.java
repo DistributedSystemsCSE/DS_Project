@@ -49,7 +49,17 @@ public class ResponseHandler {
                     String[] newMes = null;
                     Arrays.copyOfRange(newMes, 0, (mes.length - 2));
                     String uniqMes = String.join("", newMes);
-                    addMessage(uniqMes);
+                    if(!addMessage(uniqMes)){
+                        //update routing table
+                        
+                        
+                        //check for files and send responce
+                        
+                        
+                        //broadcast mesagge
+                        
+                        
+                    }
                     break;
                 case "JOIN":
                     if (!addMessage(message)) {
