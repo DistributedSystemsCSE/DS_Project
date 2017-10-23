@@ -58,20 +58,20 @@ public class Node implements Observer{
         
         Neighbour[] neighbours = ResponseHandler.getInstance()
                 .decodeRegisterResponse(responce);
-        
-        if(neighbours.length==0){
-            return true;
-        }else if(neighbours.length==1){
-            if(!neighbours[0].sendJoinAsFirstNeighbour()){
-                unregister();
-                return false;
-            }
-            return true;
-        }else if(neighbours.length==2){
-        
-        }else if(neighbours.length==3){
-        
-        }
+        System.out.println("Size: "+neighbours.length);
+//        if(neighbours.length==0){
+//            return true;
+//        }else if(neighbours.length==1){
+//            if(!neighbours[0].sendJoinAsFirstNeighbour()){
+//                unregister();
+//                return false;
+//            }
+//            return true;
+//        }else if(neighbours.length==2){
+//        
+//        }else if(neighbours.length==3){
+//        
+//        }
         return false;
     }
     
