@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ds_project;
 
 import Configs.Configs;
@@ -41,65 +36,58 @@ public class Communicator extends Observable implements Runnable{
 
     @Override
     public void run() {
-        while(true){
-            DatagramSocket socket = null;
-            try{
-                
-                socket = new DatagramSocket(configs.getClientPort());  
-                byte[] buf = new byte[65536];  
-                DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-                socket.receive(incoming);  
-                String str = new String(incoming.getData(), 0, 
-                        incoming.getLength());                  
-                
-                
-                this.message = str;                
+        while(true){            
+            String responce = receive(configs.getClientPort(), false);
+            if(responce != null){
+                this.message = responce;                
                 setChanged();
                 notifyObservers();
-                
-            }catch(IOException ex){
-                
-            }finally{
-                socket.close();
-            }
+            }            
         }
     }   
     
-    public String sendToNeighbour(String message, String peerIp, int peerPort){
-        DatagramSocket socket = null;
-        try{
-            socket = new DatagramSocket(); 
-            InetAddress IPAddress = InetAddress.getByName(peerIp); 
-            
-            byte[] toSend  = message.getBytes(); 
-		  
-            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
-                    IPAddress, peerPort); 
-            
-            socket.send(packet);
-            
-        }catch(IOException ioe){
-            ioe.printStackTrace();
-	}finally{
-            socket.close();
-        }
-        return null;
-    }
+//    public void sendToNeighbour(String message, String peerIp, int peerPort){
+//        send(message,peerIp,peerPort);
+//    }
     
     public String receiveWithTimeout(){
+        return receive(configs.getClientPort(), true);        
+    }
+    
+    public String receiveFromBeighbour(){
+        return receive(configs.getClientPort(), false);        
+    }
+    
+    public void sendToBS(String str){        
+        send(str,configs.getServerIP(),configs.getServerPort()
+                ,configs.getClientPort());        
+    }
+    
+    public String receiveFromBS(){
+       return receive(configs.getClientPort(), false);
+    }
+    
+    /* 
+     * To send available port, use port = -1
+     * otherwise port has to be specifed
+     */
+    public String receive(int port,boolean isTimeout){
         DatagramSocket socket = null;
         try{
-
-            socket = new DatagramSocket(configs.getClientPort());  
-            socket.setSoTimeout(timeout);
+            if(port==-1)
+                socket = new DatagramSocket();
+            else
+                socket = new DatagramSocket(port); 
+            if(isTimeout)
+                socket.setSoTimeout(timeout);
+            
             byte[] buf = new byte[65536];  
             DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
             socket.receive(incoming);  
             String str = new String(incoming.getData(), 0, 
                     incoming.getLength());               
             return str;
-        } catch (SocketTimeoutException e) {
-            return null;
+
         }catch(IOException ex){
             return null;
         }finally{
@@ -107,66 +95,28 @@ public class Communicator extends Observable implements Runnable{
         }
     }
     
-//    public String receiveFromBeighbour(){
-//        DatagramSocket socket = null;
-//        try{
-//
-//            socket = new DatagramSocket(configs.getClientPort());  
-//            byte[] buf = new byte[65536];  
-//            DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-//            socket.receive(incoming);  
-//            String str = new String(incoming.getData(), 0, 
-//                    incoming.getLength());               
-//            return str;
-//
-//        }catch(IOException ex){
-//            return null;
-//        }finally{
-//            socket.close();
-//        }
-//    }
-    
-    public void sendToBS(String str){
-        
+    public void send(String message,String ip,int port,int send_port){
         DatagramSocket socket = null;
         try{
+            if(send_port==-1)
+                socket = new DatagramSocket();
+            else
+                socket = new DatagramSocket(send_port);
             
-            socket = new DatagramSocket(configs.getClientPort());           
-            InetAddress ip = InetAddress.getByName(configs.getServerIP());             
-            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), 
-                    ip, configs.getServerPort());  
-            socket.send(dp);       
+            InetAddress IPAddress = InetAddress.getByName(ip);            
+            byte[] toSend  = message.getBytes(); 		  
+            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
+                    IPAddress, port); 
             
-        }catch(IOException ex){
-            ex.printStackTrace();
+            socket.send(packet);
+            
+        }catch(IOException ioe){
+            ioe.printStackTrace();
 	}finally{
-            socket.close(); 
-        }
-        
+            socket.close();
+        }       
     }
     
-    // TODO
-    // Refactor the code.............
-    public String receiveFromBS(){
-        DatagramSocket socket = null;
-            try{
-                
-                socket = new DatagramSocket(configs.getClientPort());  
-                byte[] buf = new byte[65536];  
-                DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-                socket.receive(incoming);  
-                String str = new String(incoming.getData(), 0, 
-                        incoming.getLength());               
-                return str;
-                
-            }catch(IOException ex){
-                return null;
-            }finally{
-                socket.close();
-            }
-    }
-    
-     
     public void addNode(Node node){    
         this.addObserver(node);
     }
