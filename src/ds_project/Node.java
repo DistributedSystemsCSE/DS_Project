@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,7 +33,7 @@ public class Node extends Host implements Observer{
         neighbours_list = new ArrayList<>();
         name = configs.getClientName();
         
-        timeout = configs.getTimeout();
+        timeout = configs.getReceiverTimeout();
         max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
         randomGenerator = new Random();
         
@@ -114,21 +116,19 @@ public class Node extends Host implements Observer{
         if(!connected)
             return false;
         
-        return false;
+        Thread setNeighbours = new Thread(new NeighboursSetter());
+        setNeighbours.start();
+        return true;
     }
     
-    private void setNeighbours(){
-        int size = max_number_of_neighbours - neighbours_list.size();
-        for(int i = 0 ; i < size ; i++){
-            Neighbour neighbour = getRandomNeighbour();
-            Neighbour[] new_neighbour =  neighbour.getNeighbours(size);
-        }
-    }
-    
+        
     public Neighbour getRandomNeighbour(){
-        int index = randomGenerator.nextInt(neighbours_list.size());
-        Neighbour item = neighbours_list.get(index);        
-        return item;
+        Neighbour neighbour = null;
+        synchronized(neighbours_list){
+            int index = randomGenerator.nextInt(neighbours_list.size());
+            neighbour = neighbours_list.get(index);
+        }
+        return neighbour;
     }
     
     public boolean unregister(){
@@ -157,5 +157,43 @@ public class Node extends Host implements Observer{
         return true;
     }
     
-    
+    private class NeighboursSetter implements Runnable{
+
+        private int timeout_neighbour;
+        
+        public NeighboursSetter(){
+            timeout_neighbour = configs.getNeighbourSetterTimeout();
+        }
+        
+        @Override
+        public void run() {
+            while(true){
+                int size;
+
+                synchronized(neighbours_list){
+                    size = max_number_of_neighbours - neighbours_list.size();
+                }
+                if(size<=0){
+                    try {
+                        Thread.sleep(timeout_neighbour);
+                        continue;
+                    } catch (InterruptedException ex) {
+                        //Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                Neighbour[] new_neighbours =  getRandomNeighbour()
+                        .getNeighbours(size);
+                for(Neighbour neighbour:new_neighbours){
+                    neighbour.sendJoin();
+                }
+                
+                try {
+                    Thread.sleep(timeout_neighbour);                    
+                } catch (InterruptedException ex) {
+                    //Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+    }
 }
