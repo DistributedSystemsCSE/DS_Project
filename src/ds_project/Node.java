@@ -1,9 +1,9 @@
 package ds_project;
 
 import Configs.Configs;
-import help.Message;
-import help.MessageType;
-import help.ResponseHandler;
+import helper.Message;
+import helper.MessageType;
+import helper.ResponseHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
