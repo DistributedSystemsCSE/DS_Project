@@ -1,6 +1,6 @@
 package ds_project;
 
-import Configs.Configs;
+import configs.Configs;
 import helper.MessageHandler;
 import java.io.IOException;
 import java.net.DatagramPacket;

@@ -1,6 +1,6 @@
 package ds_project;
 
-import Configs.Configs;
+import configs.Configs;
 import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
@@ -71,9 +71,13 @@ public class Node extends Host{
         
                 
         if(neighbours.length==0){
+            //TODO
+            // add neighbour search
             startReceiving();
             return true;
         }else if(neighbours.length==1){
+            //TODO
+            // add neighbour search
             boolean connected = false;
             try{
                 connected = neighbours[0].sendJoinAsFirstNeighbour();

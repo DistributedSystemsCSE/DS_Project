@@ -1,6 +1,6 @@
 package ds_project;
 
-import Configs.Configs;
+import configs.Configs;
 import helper.Message;
 import helper.MessageType;
 import java.net.DatagramPacket;
