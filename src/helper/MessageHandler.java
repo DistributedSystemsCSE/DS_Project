@@ -230,7 +230,8 @@ public class MessageHandler implements Runnable {
                     int i = 0;
                     for (Neighbour nb : neighbours) {
                         ipList[i] = nb.getIp();
-                        portList[i++] = nb.getPort();
+                        portList[i] = nb.getPort();
+                        i++;
                     }
 
                     String resMsg = (new Message(MessageType.NERRES,
@@ -255,6 +256,11 @@ public class MessageHandler implements Runnable {
                 }
                 break;
             case "LEAVE":
+                if(!addMessage(message)){
+                    ip = mes[2];
+                    port = Integer.parseInt(mes[3]);
+                    node.removeNeighbour(new Neighbour(ip, port));
+                }
                 break;
             case "LEAVEOK":
                 break;
@@ -329,6 +335,7 @@ public class MessageHandler implements Runnable {
         String[] mes = message.split(" ");
         if (mes[1].equals("JOINOK")) {
             if (mes[2].equals("0")) {
+                node.addNeighbours(new Neighbour(mes[3], Integer.parseInt(mes[4])));
                 return true;
             } else if (mes[2].equals("9999")) {
                 throw new BsRegisterException("failed, can’t register."
