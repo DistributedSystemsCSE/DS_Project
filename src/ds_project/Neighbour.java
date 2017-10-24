@@ -42,6 +42,12 @@ public class Neighbour extends Host{
         com.send(message, ip, port,-1);
     }
     
+    public void sendSearchRequest(String query,String ip_sender,int port_sender){
+        String message = (new Message(MessageType.SER, ip_sender,
+                port_sender, ip_sender, port_sender, query, 0)).getMessage();
+        com.sendToPeer(message, message, port);
+    }
+    
     public void sendIsAlive(){
         //TODO        
     }

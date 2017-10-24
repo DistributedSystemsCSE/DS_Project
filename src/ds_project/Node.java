@@ -34,7 +34,7 @@ public class Node extends Host{
         neighbours_list = new ArrayList<>();
         name = configs.getClientName();
         
-        timeout = configs.getReceiverTimeout();
+        timeout = configs.getTimeoutForFirstTwo();
         max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
         randomGenerator = new Random();
         
@@ -119,6 +119,7 @@ public class Node extends Host{
             }	
             return true;
         }else if(neighbours.length==3){
+            System.out.println("3333");
             startReceiving();
             int index_1 = randomGenerator.nextInt(neighbours.length);
             int index_2 = randomGenerator.nextInt(neighbours.length);
@@ -251,7 +252,12 @@ public class Node extends Host{
      */
     
     public void seachFile(String query){
-        //String message = (new Message(MessageType.REG, ip, port, ip, port, name, port, ip))
+        
+        synchronized(neighbours_list){            
+            neighbours_list.stream().forEach((neighbour_) -> {
+               neighbour_.sendSearchRequest(query,ip,port);                    
+           });
+        }
     }
     
     private class NeighbourSetter implements Runnable{
