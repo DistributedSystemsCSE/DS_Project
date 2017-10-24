@@ -42,6 +42,7 @@ public class Node extends Host{
         super.setPort(configs.getClientPort());
         
         mh = MessageHandler.getInstance();
+        mh.setNode(this);
         com = Communicator.getInstance();
         com.setMessageHandler(mh);
         mh.setCommunicator(com);

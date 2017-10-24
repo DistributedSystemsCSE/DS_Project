@@ -30,7 +30,9 @@ public class Message {
             case JOIN:
                 message = appendLength("JOIN"+" "+ip+" "+port);
                 break;
-                
+            case JOINOK:
+                message = appendLength("JOINOK"+" "+ip+" "+port);
+                break;
         }
     }
     

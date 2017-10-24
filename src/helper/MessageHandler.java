@@ -26,11 +26,14 @@ public class MessageHandler implements Runnable {
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-        fileHandler = new FileHandler();
-        node = Node.getInstance();
+        fileHandler = new FileHandler();        
         message_list = new ArrayList<>();
     }
 
+    public void setNode(Node node){
+        this.node = node;
+    }    
+    
     public void setCommunicator(Communicator communicator) {
         this.communicator = communicator;
     }
@@ -55,7 +58,7 @@ public class MessageHandler implements Runnable {
             while (!shouldKill) {
                 msg = message_queue.take();
 //                System.out.println("Consumed " + msg);
-                handle(msg);
+                this.handle(msg);
                 Thread.sleep(10);
             }
         } catch (InterruptedException e) {
@@ -193,16 +196,19 @@ public class MessageHandler implements Runnable {
 //                            routingTable.updateTable(ip, port, ip, port, 1);
 //                        }
                     node.addNeighbours(new Neighbour(ip, port));
+                    
                     String resMsg = (new Message(MessageType.JOINOK,
+                            0,
                             node.getIp(),
                             node.getPort())).getMessage();
+                    System.out.println("res:"+resMsg);
                     communicator.sendToPeer(resMsg, ip, port);
                 }
                 break;
             case "JOINOK":
                 if (!addMessage(message)) {
-                    port = Integer.parseInt(mes[3]);
-                    ip = mes[2];
+                    ip = mes[3];
+                    port = Integer.parseInt(mes[4]);
                     System.out.println("New JoinOK message");
 //                    if (!addMessage(message)) {
 //                        if (node.addNeighbours(new Neighbour(ip, port))) {
@@ -262,10 +268,13 @@ public class MessageHandler implements Runnable {
 
     }
 
-    public synchronized boolean addMessage(String message) {
+    public boolean addMessage(String message) {
+        System.out.println("1111");
         if (message_list.stream().anyMatch((str) -> (str.equals(message)))) {
+            System.out.println("2222");
             return true;
         } else {
+            System.out.println("3333");
             message_list.add(message);
             return false;
         }
@@ -275,13 +284,17 @@ public class MessageHandler implements Runnable {
      * @param message
      * @throws helper.BsRegisterException
      *
-     * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
+     * Decode 
+     * length REGOK no_nodes IP_1 port_1 IP_2 port_2
      */
     public Neighbour[] decodeRegisterResponse(String message)
             throws BsRegisterException {
 
         String[] mes = message.split(" ");
+        System.out.println(message);
+        System.out.println("mes: "+mes[2]);
         int no_nodes = Integer.parseInt(mes[2]);
+        
         if (no_nodes < 9996) {
             Neighbour[] neighbour = new Neighbour[no_nodes];
             for (int n = 0; n < no_nodes; n ++) {
