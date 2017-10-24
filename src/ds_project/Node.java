@@ -79,8 +79,15 @@ public class Node extends Host{
             return true;
         }else if(neighbours.length==1){
             //TODO
-            // add neighbour search           
-            if(!neighbours[0].sendJoinAsFirstNeighbour()){
+            // add neighbour search     
+            boolean connect = false;
+            try{
+                connect = neighbours[0].sendJoinAsFirstNeighbour();
+            }catch(BsRegisterException ex){
+                ex.printStackTrace();
+                connect = false;
+            }
+            if(!connect){
                 unregister();
                 return false;
             }
