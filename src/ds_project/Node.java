@@ -76,11 +76,15 @@ public class Node extends Host{
         if(neighbours.length==0){
             //TODO
             // add neighbour search
+            Thread neighbourSetter = new Thread(new NeighbourSetter());
+            neighbourSetter.start();
             startReceiving();
             return true;
         }else if(neighbours.length==1){
             //TODO
-            // add neighbour search     
+            // add neighbour search 
+            Thread neighbourSetter = new Thread(new NeighbourSetter());
+            neighbourSetter.start();
             boolean connect = false;
             try{
                 connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
@@ -134,8 +138,8 @@ public class Node extends Host{
     
     private boolean connectToTheNetwork(Neighbour nb1,Neighbour nb2){
         boolean connected = false;
-        nb1.sendJoin();
-        nb2.sendJoin();
+        nb1.sendJoin(ip,port);
+        nb2.sendJoin(ip,port);
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)<timeout){
             if(neighbours_list.size()>0){
@@ -225,6 +229,10 @@ public class Node extends Host{
         return true;
     }
     
+    public boolean removeNeighbour(Neighbour neb){
+        return neighbours_list.remove(neb);
+    }
+    
     private class NeighbourSetter implements Runnable{
 
         private final int timeout_neighbour;
@@ -237,11 +245,12 @@ public class Node extends Host{
         public void run() {
             while(true){
                 int size;
-
+                int neighbours_size;
                 synchronized(neighbours_list){
-                    size = max_number_of_neighbours - neighbours_list.size();
+                    neighbours_size = neighbours_list.size();
+                    size = max_number_of_neighbours - neighbours_size;
                 }
-                if(size<=0){
+                if(size<=0||neighbours_size==0){
                     try {
                         Thread.sleep(timeout_neighbour);
                         continue;
@@ -249,10 +258,10 @@ public class Node extends Host{
                         
                     }
                 }
-                Neighbour[] new_neighbours =  getRandomNeighbour()
+                Neighbour[] new_neighbours = getRandomNeighbour()
                         .getNeighbours(size);
                 for(Neighbour neighbour:new_neighbours){
-                    neighbour.sendJoin();
+                    neighbour.sendJoin(ip,port);
                 }
                 
                 try {

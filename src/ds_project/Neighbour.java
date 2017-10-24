@@ -32,8 +32,8 @@ public class Neighbour extends Host{
                 .decodeInitialJoinResponse(responce);
     }
     
-    public void sendJoin(){
-        String message = (new Message(MessageType.JOIN, ip, port))
+    public void sendJoin(String ip_sender,int port_sender){
+        String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         com.send(message, ip, port,-1);
     }
