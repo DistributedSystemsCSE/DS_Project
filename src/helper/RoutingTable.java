@@ -63,4 +63,8 @@ public class RoutingTable {
     public boolean isInTable(String ip,int port){
         return hashTable.containsKey(ip+":"+port);
     }
+    
+    public RoutingDestination getDestination(String ip,int port){
+        return hashTable.get(ip+":"+port);
+    }
 }
