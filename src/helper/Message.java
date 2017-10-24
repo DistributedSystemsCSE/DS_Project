@@ -64,7 +64,8 @@ public class Message {
     
     //NEW
     public Message(MessageType type, int noOfFiles, String fileDestinationIp,
-            int fileDestinationPort, int hops, String searchedFile, List<String> files){
+            int fileDestinationPort, String forwarding_IP, int forwarding_port,
+            int hops, String searchedFile, List<String> files){
 
         switch(type){
         
@@ -74,7 +75,7 @@ public class Message {
                 for (String file : files) {
                     filesString = filesString +" "+ file;
                 }
-                message=appendLength("SEROK"+" "+noOfFiles+" "+fileDestinationIp+" "+fileDestinationPort+" "+hops+" "+filesString);
+                message=appendLength("SEROK"+" "+noOfFiles+" "+fileDestinationIp+" "+fileDestinationPort+" "+forwarding_IP+" "+forwarding_port+" "+hops+" "+filesString);
                 break;
         
             }
