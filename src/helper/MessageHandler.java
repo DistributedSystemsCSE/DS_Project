@@ -288,9 +288,9 @@ public class MessageHandler implements Runnable {
         int no_nodes = Integer.parseInt(mes[2]);
         if (no_nodes < 9996) {
             Neighbour[] neighbour = new Neighbour[no_nodes];
-            for (int n = 0; n < no_nodes; n++) {
-                neighbour[n] = new Neighbour(mes[(n * 2) + 3],
-                        Integer.parseInt(mes[(n * 2) + 4]));
+            for (int n = 0; n < no_nodes; n+=2) {
+                neighbour[n] = new Neighbour(mes[n  + 3],
+                        Integer.parseInt(mes[n + 4]));
             }
             return neighbour;
         } else {
@@ -318,15 +318,9 @@ public class MessageHandler implements Runnable {
      *
      * length JOINOK value
      */
-    public boolean decodeInitialJoinResponse(String message)
-            throws BsRegisterException {
-        try {
+    public boolean decodeInitialJoinResponse(String message){
             String[] mes = message.split(" ");
             return mes[1].equals("JOINOK") && mes[1].equals("0");
-        } catch (Exception e) {
-            throw new BsRegisterException("Error while adding new node "
-                    + "to routing table");
-        }
     }
 
     /**
