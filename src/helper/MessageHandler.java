@@ -109,7 +109,7 @@ public class MessageHandler implements Runnable {
 
          Search
          length SER IP port forwarding_IP forwarding_port file_name hops timestamp
-         length SEROK no_files IP port hops searchedFile filename1 filename2 ... ... timestamp
+         length SEROK no_files IP port forwarding_IP forwarding_port hops searchedFile filename1 filename2 ... ... timestamp
         
          Requist Neighbours
          length NEREQ IP port count timestamp
@@ -164,6 +164,14 @@ public class MessageHandler implements Runnable {
                         node.sendToNeighboursExcept(broadcastMsg, (new Neighbour(forwardingIP, forwardingPort)));
                     }
                     break;
+                case "SEROK":
+                    port = Integer.parseInt(mes[4]);
+                    ip = mes[3];
+                    if(!addMessage(message)){
+                        //Check is message for current node
+                        
+                    }
+                    break;
                 case "JOIN":
                     port = Integer.parseInt(mes[3]);
                     ip = mes[2];
@@ -215,8 +223,6 @@ public class MessageHandler implements Runnable {
                 case "LEAVE":
                     break;
                 case "LEAVEOK":
-                    break;
-                case "SEROK":
                     break;
                 case "ERROR":
                     break;
