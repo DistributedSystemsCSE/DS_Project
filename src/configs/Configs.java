@@ -65,13 +65,23 @@ public class Configs {
         }
     }
     
-     public String getStringProperty(String propertyName){
+    public String getStringProperty(String propertyName){
         try{
             prop.load(new FileInputStream("configs.ds"));
             return prop.getProperty(propertyName);
         }catch(IOException ex){
             System.out.println(ex.getMessage());
             return null;
+        }
+    }
+    
+    public void setProperty(String propertyName,String value){
+        try{
+            prop.load(new FileInputStream("configs.ds"));
+            System.out.println(prop.setProperty(propertyName,value));
+        }catch(IOException ex){
+            System.out.println(ex.getMessage());
+            
         }
     }
 }
