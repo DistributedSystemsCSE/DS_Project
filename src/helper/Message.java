@@ -44,14 +44,14 @@ public class Message {
     }
     
     //NEW
-    public Message(MessageType type, int value, String[] ip, int[] port){
+    public Message(MessageType type, String responding_ip, int responding_port, int value, String[] ip, int[] port){
         switch (type){
             case NERRES:
                 String neighbourList="";
                 for(int i=0;i<value;i++){
                     neighbourList = neighbourList+" "+ip[i]+" "+String.valueOf(port[i]);
                 }
-                message = appendLength("NERRES"+" "+value+neighbourList);
+                message = appendLength("NERRES"+" "+responding_ip+" "+responding_port+" "+value+neighbourList);
                 break;
         }
     }
