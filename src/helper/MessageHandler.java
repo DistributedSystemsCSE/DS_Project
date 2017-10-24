@@ -39,7 +39,7 @@ public class MessageHandler implements Runnable {
         this.shouldKill = shouldKill;
     }
 
-    public void removeRoute(String ip, String port) {
+    public void removeRoute(String ip, int port) {
         routingTable.removeFromTable(ip, port);
     }
 
@@ -147,6 +147,8 @@ public class MessageHandler implements Runnable {
                                 noOfFiles,
                                 ip,
                                 port,
+                                ip,
+                                port,
                                 (hops + 1),
                                 fileName,
                                 searchFiles)).getMessage();
@@ -167,9 +169,51 @@ public class MessageHandler implements Runnable {
                 case "SEROK":
                     port = Integer.parseInt(mes[4]);
                     ip = mes[3];
-                    if(!addMessage(message)){
+                    if (!addMessage(message)) {
                         //Check is message for current node
-                        
+                        if (ip.equals(node.getIp()) && port == node.getPort()) {
+                            //show search results
+                            int count = Integer.parseInt(mes[2]);
+                            System.out.println("Search results " + mes[8]);
+                            System.out.println("From " + mes[5] + mes[6]);
+                            for (int i = 0; i < count; i++) {
+                                System.out.println(mes[9 + i]);
+                            }
+                        } else {
+                            //forward message if not for current node
+                            int noOfFiles = Integer.parseInt(mes[2]);
+                            hops = Integer.parseInt(mes[7]);
+                            String fileName = mes[8];
+                            forwardingIP=mes[5];
+                            forwardingPort=Integer.parseInt(mes[6]);
+ 
+                            List<String> searchFiles = new ArrayList<>();
+                            for (int i = 0; i < noOfFiles; i++) {
+                                searchFiles.add(mes[9 + i]);
+                            }
+                            
+                            //Generate message
+                            String resMsg = (new Message(MessageType.SEROK,
+                                        noOfFiles,
+                                        ip,
+                                        port,
+                                        node.getIp(),
+                                        node.getPort(),
+                                        (hops),
+                                        fileName,
+                                        searchFiles)).getMessage();
+                            
+                            //Check destination in routing table
+                            if (routingTable.isInTable(ip, port)) {
+                                RoutingDestination routingDestination = routingTable.getDestination(ip, port);
+                                communicator.sendToPeer(resMsg,
+                                        routingDestination.getIp(),
+                                        routingDestination.getPort());
+                            }
+                            else{
+                                node.sendToNeighboursExcept(resMsg, (new Neighbour(forwardingIP, forwardingPort)));
+                            }
+                        }
                     }
                     break;
                 case "JOIN":
