@@ -230,7 +230,7 @@ public class MessageHandler implements Runnable {
                     int i = 0;
                     for (Neighbour nb : neighbours) {
                         ipList[i] = nb.getIp();
-                        portList[i++] = nb.getPort();
+                        portList[i] = nb.getPort();
                         i++;
                     }
 
