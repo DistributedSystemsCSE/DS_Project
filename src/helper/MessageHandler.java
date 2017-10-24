@@ -240,10 +240,10 @@ public class MessageHandler implements Runnable {
                 //port = Integer.parseInt(mes[3]);
                 if (!addMessage(message)) {
                     int neighbourCount = Integer.parseInt(mes[4]);
-                    for (int i = 0; i < neighbourCount; i += 2) {
+                    for (int i = 0; i < neighbourCount; i++ ) {
                         node.addNeighbours(new Neighbour(
-                                mes[5 + i],
-                                Integer.parseInt(mes[6 + i])));
+                                mes[5 + (i*2)],
+                                Integer.parseInt(mes[6 + (i*2)])));
                     }
                 }
                 break;
