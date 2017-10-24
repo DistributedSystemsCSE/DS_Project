@@ -51,7 +51,7 @@ public class RoutingTable {
             String key = entry.getKey();
             RoutingDestination value = entry.getValue();
             if (ip.equals(value.getIp())
-                    && value.getPort() == Integer.parseInt(port)) {
+                    && value.getPort() == port) {
                 al.add(ip + ":" + port);
             }
         }
