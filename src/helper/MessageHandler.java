@@ -335,6 +335,7 @@ public class MessageHandler implements Runnable {
         String[] mes = message.split(" ");
         if (mes[1].equals("JOINOK")) {
             if (mes[2].equals("0")) {
+                node.addNeighbours(new Neighbour(mes[3], Integer.parseInt(mes[4])));
                 return true;
             } else if (mes[2].equals("9999")) {
                 throw new BsRegisterException("failed, can’t register."
