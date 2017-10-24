@@ -180,8 +180,9 @@ public class Node extends Host{
     
     public Neighbour[] getRandomNeighbours(int size) {
         int list_size = neighbours_list.size();
+        Neighbour[] neighbours;
         if(size<list_size){
-            Neighbour[] neighbours = new Neighbour[size];
+            neighbours = new Neighbour[size];
             ArrayList<Integer> list = new ArrayList<>();
             for (int i=1; i<list_size; i++) {
                 list.add(i);
@@ -189,13 +190,23 @@ public class Node extends Host{
             Collections.shuffle(list);
             for (int i=0; i<size; i++) {
                 neighbours[i] = neighbours_list.get(list.get(i));
-            }
-            return neighbours;
+            }            
         }else{
-            return neighbours_list.toArray(new Neighbour[0]);
+            neighbours = neighbours_list.toArray(new Neighbour[0]);
+            System.out.println("Aray_size: "+neighbours.length);
+            System.out.println("List_size: "+neighbours_list.size());
         }
+        return neighbours;
     }
     
+    public String getNeighbourString(){
+        String nb = "";
+        System.out.println(neighbours_list.size());
+        
+        nb = neighbours_list.stream().map((neighbour) -> 
+                neighbour.toString()+"\n").reduce(nb, String::concat);
+        return nb;
+    }
     public void showNeighbours(){
         System.out.println(neighbours_list.size());
         neighbours_list.stream()
@@ -235,6 +246,8 @@ public class Node extends Host{
     }
     
     public boolean addNeighbours(Neighbour neb){
+        if(neb.ip.equals(ip)&&neb.port==port)
+            return false;
         if (!neighbours_list.stream().noneMatch((tem) -> (tem.equals(neb)))) {
             return false;
         }
