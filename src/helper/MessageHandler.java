@@ -25,12 +25,12 @@ public class MessageHandler implements Runnable {
     private final FileHandler fileHandler;
 
     private MessageHandler() {
-        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);        
+        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
         fileHandler = new FileHandler();
         node = Node.getInstance();
     }
-    
-    public void setCommunicator(Communicator communicator){
+
+    public void setCommunicator(Communicator communicator) {
         this.communicator = communicator;
     }
 
@@ -116,7 +116,7 @@ public class MessageHandler implements Runnable {
         
          Requist Neighbours
          length NEREQ IP port count timestamp
-         length NERRES value IP_1 port_1 IP_2 port_2 ... ... timestamp
+         length NERRES IP port value IP_1 port_1 IP_2 port_2 ... ... timestamp
         
          IsAlive
          length ISALIVE IP port timestamp
@@ -126,8 +126,8 @@ public class MessageHandler implements Runnable {
             String[] mes = message.split(" ");
             int port;
             String ip;
-            
-            System.out.println("New Message: "+message);
+
+            System.out.println("New Message: " + message);
 
             switch (mes[1]) {
                 case "SER":
@@ -139,8 +139,8 @@ public class MessageHandler implements Runnable {
                     String uniqMes = mes[0] + mes[1] + mes[2] + mes[3] + mes[6] + mes[8];
                     if (!addMessage(uniqMes)) {
                         //update routing table
-                        routingTable.updateTable(ip, port,
-                                forwardingIP, forwardingPort, (hops + 1));
+                        //routingTable.updateTable(ip, port,
+                        //        forwardingIP, forwardingPort, (hops + 1));
 
                         // check for files and send responce
                         String fileName = mes[6];
@@ -152,8 +152,8 @@ public class MessageHandler implements Runnable {
                                 noOfFiles,
                                 ip,
                                 port,
-                                ip,
-                                port,
+                                node.getIp(),
+                                node.getPort(),
                                 (hops + 1),
                                 fileName,
                                 searchFiles)).getMessage();
@@ -172,76 +172,44 @@ public class MessageHandler implements Runnable {
                     }
                     break;
                 case "SEROK":
-                    port = Integer.parseInt(mes[4]);
-                    ip = mes[3];
+                    //port = Integer.parseInt(mes[4]);
+                    //ip = mes[3];
                     if (!addMessage(message)) {
-                        //Check is message for current node
-                        if (ip.equals(node.getIp()) && port == node.getPort()) {
-                            //show search results
-                            int count = Integer.parseInt(mes[2]);
-                            System.out.println("Search results " + mes[8]);
-                            System.out.println("From " + mes[5] + mes[6]);
-                            for (int i = 0; i < count; i++) {
-                                System.out.println(mes[9 + i]);
-                            }
-                        } else {
-                            //forward message if not for current node
-                            int noOfFiles = Integer.parseInt(mes[2]);
-                            hops = Integer.parseInt(mes[7]);
-                            String fileName = mes[8];
-                            forwardingIP=mes[5];
-                            forwardingPort=Integer.parseInt(mes[6]);
- 
-                            List<String> searchFiles = new ArrayList<>();
-                            for (int i = 0; i < noOfFiles; i++) {
-                                searchFiles.add(mes[9 + i]);
-                            }
-                            
-                            //Generate message
-                            String resMsg = (new Message(MessageType.SEROK,
-                                        noOfFiles,
-                                        ip,
-                                        port,
-                                        node.getIp(),
-                                        node.getPort(),
-                                        (hops),
-                                        fileName,
-                                        searchFiles)).getMessage();
-                            
-                            //Check destination in routing table
-                            if (routingTable.isInTable(ip, port)) {
-                                RoutingDestination routingDestination = routingTable.getDestination(ip, port);
-                                communicator.sendToPeer(resMsg,
-                                        routingDestination.getIp(),
-                                        routingDestination.getPort());
-                            }
-                            else{
-                                node.sendToNeighboursExcept(resMsg, (new Neighbour(forwardingIP, forwardingPort)));
-                            }
+                        //show search results
+                        int count = Integer.parseInt(mes[2]);
+                        System.out.println("Search results " + mes[8]);
+                        System.out.println("From " + mes[5] + mes[6]);
+                        for (int i = 0; i < count; i++) {
+                            System.out.println(mes[9 + i]);
                         }
                     }
                     break;
                 case "JOIN":
-                    port = Integer.parseInt(mes[3]);
-                    ip = mes[2];
                     if (!addMessage(message)) {
+                        port = Integer.parseInt(mes[3]);
+                        ip = mes[2];
                         System.out.println("New Join message");
-                        if (node.addNeighbours(new Neighbour(ip, port))) {
-                            routingTable.updateTable(ip, port, ip, port, 1);
-                        }
+//                        if (node.addNeighbours(new Neighbour(ip, port))) {
+//                            routingTable.updateTable(ip, port, ip, port, 1);
+//                        }
+                        node.addNeighbours(new Neighbour(ip, port));
                         String resMsg = (new Message(MessageType.JOINOK,
-                                ip, port)).getMessage();
+                                node.getIp(),
+                                node.getPort())).getMessage();
                         communicator.sendToPeer(resMsg, ip, port);
                     }
                     break;
                 case "JOINOK":
-                    port = Integer.parseInt(mes[3]);
-                    ip = mes[2];
-                    System.out.println("New JoinOK message");
                     if (!addMessage(message)) {
-                        if (node.addNeighbours(new Neighbour(ip, port))) {
-                            routingTable.updateTable(ip, port, ip, port, 1);
-                        }
+                        port = Integer.parseInt(mes[3]);
+                        ip = mes[2];
+                        System.out.println("New JoinOK message");
+//                    if (!addMessage(message)) {
+//                        if (node.addNeighbours(new Neighbour(ip, port))) {
+//                            routingTable.updateTable(ip, port, ip, port, 1);
+//                        }
+//                    }
+                        node.addNeighbours(new Neighbour(ip, port));
                     }
                     break;
                 case "NEREQ":
@@ -260,6 +228,8 @@ public class MessageHandler implements Runnable {
                         }
 
                         String resMsg = (new Message(MessageType.NERRES,
+                                node.getIp(),
+                                node.getPort(),
                                 neighboursCount,
                                 ipList,
                                 portList)).getMessage();
@@ -267,8 +237,15 @@ public class MessageHandler implements Runnable {
                     }
                     break;
                 case "NERRES":
+                    //ip = mes[2];
+                    //port = Integer.parseInt(mes[3]);
                     if (!addMessage(message)) {
-
+                        int neighbourCount = Integer.parseInt(mes[4]);
+                        for (int i = 0; i < neighbourCount; i += 2) {
+                            node.addNeighbours(new Neighbour(
+                                    mes[5 + i],
+                                    Integer.parseInt(mes[6 + i])));
+                        }
                     }
                     break;
                 case "LEAVE":
