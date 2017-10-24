@@ -16,7 +16,8 @@ public class Neighbour extends Host{
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
-        super(ip,port);        
+        super(ip,port); 
+        com = Communicator.getInstance();
     }
     
     public boolean sendJoinAsFirstNeighbour() throws BsRegisterException{
