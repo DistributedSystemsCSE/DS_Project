@@ -231,6 +231,7 @@ public class MessageHandler implements Runnable {
                     for (Neighbour nb : neighbours) {
                         ipList[i] = nb.getIp();
                         portList[i++] = nb.getPort();
+                        i++;
                     }
 
                     String resMsg = (new Message(MessageType.NERRES,
@@ -255,6 +256,11 @@ public class MessageHandler implements Runnable {
                 }
                 break;
             case "LEAVE":
+                if(!addMessage(message)){
+                    ip = mes[2];
+                    port = Integer.parseInt(mes[3]);
+                    node.removeNeighbour(new Neighbour(ip, port));
+                }
                 break;
             case "LEAVEOK":
                 break;
