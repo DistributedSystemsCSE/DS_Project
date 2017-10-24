@@ -1,6 +1,7 @@
 package configs;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -76,9 +77,9 @@ public class Configs {
     }
     
     public void setProperty(String propertyName,String value){
-        try{
-            prop.load(new FileInputStream("configs.ds"));
-            System.out.println(prop.setProperty(propertyName,value));
+        try{            
+            prop.setProperty(propertyName,value);
+            prop.store(new FileOutputStream("configs.ds"), null);
         }catch(IOException ex){
             System.out.println(ex.getMessage());
             
