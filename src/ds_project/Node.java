@@ -43,6 +43,8 @@ public class Node extends Host{
         
         mh = MessageHandler.getInstance();
         com = Communicator.getInstance();
+        com.setMessageHandler(mh);
+        mh.setCommunicator(com);
     }
     
     private static class InstanceHolder{

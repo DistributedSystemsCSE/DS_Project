@@ -23,7 +23,7 @@ public class Neighbour extends Host{
     public boolean sendJoinAsFirstNeighbour() throws BsRegisterException{
         String message = (new Message(MessageType.JOIN, ip, port))
                 .getMessage();
-        com.send(message, getIp(), getPort(),-1);
+        com.send(message, ip, port,-1);
         String responce = com.receiveWithTimeout();
         return MessageHandler.getInstance()
                 .decodeInitialJoinResponse(responce);
