@@ -123,6 +123,8 @@ public class MessageHandler implements Runnable {
             String[] mes = message.split(" ");
             int port;
             String ip;
+            
+            System.out.println("New Message: "+message);
 
             switch (mes[1]) {
                 case "SER":
@@ -220,6 +222,7 @@ public class MessageHandler implements Runnable {
                     port = Integer.parseInt(mes[3]);
                     ip = mes[2];
                     if (!addMessage(message)) {
+                        System.out.println("New Join message");
                         if (node.addNeighbours(new Neighbour(ip, port))) {
                             routingTable.updateTable(ip, port, ip, port, 1);
                         }
@@ -231,6 +234,7 @@ public class MessageHandler implements Runnable {
                 case "JOINOK":
                     port = Integer.parseInt(mes[3]);
                     ip = mes[2];
+                    System.out.println("New JoinOK message");
                     if (!addMessage(message)) {
                         if (node.addNeighbours(new Neighbour(ip, port))) {
                             routingTable.updateTable(ip, port, ip, port, 1);
