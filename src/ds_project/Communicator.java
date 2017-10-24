@@ -22,7 +22,7 @@ public class Communicator implements Runnable{
     
     private final Configs configs;
     private final int timeout;    
-    private final MessageHandler messageHandler;
+    private MessageHandler messageHandler;
     
     private Communicator(){
         configs = new Configs();
@@ -30,8 +30,11 @@ public class Communicator implements Runnable{
         serverIP = configs.getServerIP();
         clientIP = configs.getClientIP();
         clientPort = configs.getClientPort();        
-        serverPort = configs.getServerPort();  
-        messageHandler = MessageHandler.getInstance();
+        serverPort = configs.getServerPort();          
+    }
+    
+    public void setMessageHandler(MessageHandler messageHandler){
+        this.messageHandler = messageHandler;
     }
 
     /**
