@@ -34,6 +34,10 @@ public class FileHandler {
         }
     }
 
+    public List<String> getCurrentFileNames() {
+        return fileNames; 
+    }
+    
     public List<String> getRandomFileNames() {
         try {
             Scanner sc = new Scanner(new File("FileNames.txt"));
