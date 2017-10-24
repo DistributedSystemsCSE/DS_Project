@@ -26,14 +26,14 @@ public class MessageHandler implements Runnable {
 
     private MessageHandler() {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-        fileHandler = new FileHandler();        
+        fileHandler = new FileHandler();
         message_list = new ArrayList<>();
     }
 
-    public void setNode(Node node){
+    public void setNode(Node node) {
         this.node = node;
-    }    
-    
+    }
+
     public void setCommunicator(Communicator communicator) {
         this.communicator = communicator;
     }
@@ -196,12 +196,12 @@ public class MessageHandler implements Runnable {
 //                            routingTable.updateTable(ip, port, ip, port, 1);
 //                        }
                     node.addNeighbours(new Neighbour(ip, port));
-                    
+
                     String resMsg = (new Message(MessageType.JOINOK,
                             0,
                             node.getIp(),
                             node.getPort())).getMessage();
-                    System.out.println("res:"+resMsg);
+                    System.out.println("res:" + resMsg);
                     communicator.sendToPeer(resMsg, ip, port);
                 }
                 break;
@@ -230,7 +230,7 @@ public class MessageHandler implements Runnable {
                     int i = 0;
                     for (Neighbour nb : neighbours) {
                         ipList[i] = nb.getIp();
-                        portList[i++] = nb.getPort();
+                        portList[i] = nb.getPort();
                         i++;
                     }
 
@@ -248,15 +248,24 @@ public class MessageHandler implements Runnable {
                 //port = Integer.parseInt(mes[3]);
                 if (!addMessage(message)) {
                     int neighbourCount = Integer.parseInt(mes[4]);
-                    for (int i = 0; i < neighbourCount; i++ ) {
-                        node.addNeighbours(new Neighbour(
-                                mes[5 + (i*2)],
-                                Integer.parseInt(mes[6 + (i*2)])));
+                    for (int i = 0; i < neighbourCount; i++) {
+                        ip = mes[5 + (i * 2)];
+                        port = Integer.parseInt(mes[6 + (i * 2)]);
+                        if (node.addNeighbours(new Neighbour(
+                                ip,
+                                port))) {
+                            String resMsg = (new Message(MessageType.JOINOK,
+                                    0,
+                                    node.getIp(),
+                                    node.getPort())).getMessage();
+                            System.out.println("Sending new neighbour joinok:" + resMsg);
+                            communicator.sendToPeer(resMsg, ip, port);
+                        }
                     }
                 }
                 break;
             case "LEAVE":
-                if(!addMessage(message)){
+                if (!addMessage(message)) {
                     ip = mes[2];
                     port = Integer.parseInt(mes[3]);
                     node.removeNeighbour(new Neighbour(ip, port));
@@ -300,22 +309,21 @@ public class MessageHandler implements Runnable {
      * @param message
      * @throws helper.BsRegisterException
      *
-     * Decode 
-     * length REGOK no_nodes IP_1 port_1 IP_2 port_2
+     * Decode length REGOK no_nodes IP_1 port_1 IP_2 port_2
      */
     public Neighbour[] decodeRegisterResponse(String message)
             throws BsRegisterException {
 
         String[] mes = message.split(" ");
         System.out.println(message);
-        System.out.println("mes: "+mes[2]);
+        System.out.println("mes: " + mes[2]);
         int no_nodes = Integer.parseInt(mes[2]);
-        
+
         if (no_nodes < 9996) {
             Neighbour[] neighbour = new Neighbour[no_nodes];
-            for (int n = 0; n < no_nodes; n ++) {
-                neighbour[n] = new Neighbour(mes[(n*2) + 3],
-                        Integer.parseInt(mes[(n*2) + 4]));
+            for (int n = 0; n < no_nodes; n++) {
+                neighbour[n] = new Neighbour(mes[(n * 2) + 3],
+                        Integer.parseInt(mes[(n * 2) + 4]));
             }
             return neighbour;
         } else {
@@ -348,6 +356,7 @@ public class MessageHandler implements Runnable {
         String[] mes = message.split(" ");
         if (mes[1].equals("JOINOK")) {
             if (mes[2].equals("0")) {
+                node.addNeighbours(new Neighbour(mes[3], Integer.parseInt(mes[4])));
                 return true;
             } else if (mes[2].equals("9999")) {
                 throw new BsRegisterException("failed, can’t register."

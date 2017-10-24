@@ -34,7 +34,7 @@ public class Node extends Host{
         neighbours_list = new ArrayList<>();
         name = configs.getClientName();
         
-        timeout = configs.getReceiverTimeout();
+        timeout = configs.getTimeoutForFirstTwo();
         max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
         randomGenerator = new Random();
         
@@ -119,6 +119,7 @@ public class Node extends Host{
             }	
             return true;
         }else if(neighbours.length==3){
+            System.out.println("3333");
             startReceiving();
             int index_1 = randomGenerator.nextInt(neighbours.length);
             int index_2 = randomGenerator.nextInt(neighbours.length);
@@ -196,6 +197,7 @@ public class Node extends Host{
     }
     
     public void showNeighbours(){
+        System.out.println(neighbours_list.size());
         neighbours_list.stream()
                 .forEach(neighbours_->System.out.println(neighbours_));
     }
@@ -245,6 +247,19 @@ public class Node extends Host{
         return neighbours_list.remove(neb);
     }
     
+    /*
+     * Searching......................
+     */
+    
+    public void seachFile(String query){
+        
+        synchronized(neighbours_list){            
+            neighbours_list.stream().forEach((neighbour_) -> {
+               neighbour_.sendSearchRequest(query,ip,port);                    
+           });
+        }
+    }
+    
     private class NeighbourSetter implements Runnable{
 
         private final int timeout_neighbour;
@@ -270,12 +285,11 @@ public class Node extends Host{
                         
                     }
                 }
-                Neighbour[] new_neighbours = getRandomNeighbour()
-                        .getNeighbours(size);
-                for(Neighbour neighbour:new_neighbours){
-                    neighbour.sendJoin(ip,port);
+                synchronized(neighbours_list){
+                    neighbours_list.stream().forEach((neighbour) -> {
+                        neighbour.sendNeighbourRequest(size,ip,port);
+                    });
                 }
-                
                 try {
                     Thread.sleep(timeout_neighbour);                    
                 } catch (InterruptedException ex) {

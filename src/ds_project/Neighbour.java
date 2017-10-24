@@ -42,6 +42,12 @@ public class Neighbour extends Host{
         com.send(message, ip, port,-1);
     }
     
+    public void sendSearchRequest(String query,String ip_sender,int port_sender){
+        String message = (new Message(MessageType.SER, ip_sender,
+                port_sender, ip_sender, port_sender, query, 0)).getMessage();
+        com.sendToPeer(message, message, port);
+    }
+    
     public void sendIsAlive(){
         //TODO        
     }
@@ -50,11 +56,12 @@ public class Neighbour extends Host{
         this.com = com;
     }
 
-    public Neighbour[] getNeighbours(int size){
-        //TODO
-        // send message to the node and get required neighbours
-        Neighbour[] neighbours = null;
-        return neighbours;
+    public void sendNeighbourRequest(int size,String ip_sernder,int port){
+        
+        String message = (new Message(MessageType.NEREQ, 
+                                    ip_sernder, port, size)).getMessage();
+        com.sendToPeer(message, ip, port);
+        
     }
     
     @Override
