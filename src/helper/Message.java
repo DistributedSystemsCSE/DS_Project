@@ -26,8 +26,11 @@ public class Message {
                 break;
             case LEAVEOK:
                 message = appendLength("LEAVEOK"+" "+ip+" "+port);
+                break;
             case JOIN:
                 message = appendLength("JOIN"+" "+ip+" "+port);
+                break;
+                
         }
     }
     
