@@ -207,6 +207,13 @@ public class Node extends Host{
                 neighbour.toString()+"\n").reduce(nb, String::concat);
         return nb;
     }
+    
+    public void setNeighbourAlive(String ip,int port){
+        neighbours_list.stream().forEach((nb_)->{
+            if(nb_.ip.equals(ip)&&nb_.port==port)
+                nb_.setAlive(true);
+        });
+    }
     public void showNeighbours(){
         System.out.println(neighbours_list.size());
         neighbours_list.stream()
