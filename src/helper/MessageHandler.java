@@ -189,9 +189,9 @@ public class MessageHandler implements Runnable {
                 break;
             case "JOIN":
                 if (!addMessage(message)) {
-                    port = Integer.parseInt(mes[3]);
                     ip = mes[2];
-                    System.out.println("New Join message");
+                    port = Integer.parseInt(mes[3]);
+                    System.out.println("New JOIN message");
 //                        if (node.addNeighbours(new Neighbour(ip, port))) {
 //                            routingTable.updateTable(ip, port, ip, port, 1);
 //                        }
@@ -269,12 +269,9 @@ public class MessageHandler implements Runnable {
     }
 
     public boolean addMessage(String message) {
-        System.out.println("1111");
         if (message_list.stream().anyMatch((str) -> (str.equals(message)))) {
-            System.out.println("2222");
             return true;
         } else {
-            System.out.println("3333");
             message_list.add(message);
             return false;
         }
