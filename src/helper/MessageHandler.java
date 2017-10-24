@@ -320,7 +320,7 @@ public class MessageHandler implements Runnable {
      */
     public boolean decodeInitialJoinResponse(String message){
             String[] mes = message.split(" ");
-            return mes[1].equals("JOINOK") && mes[1].equals("0");
+            return mes[1].equals("JOINOK") && mes[2].equals("0");
     }
 
     /**
