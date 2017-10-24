@@ -21,14 +21,17 @@ public class MessageHandler implements Runnable {
     private final int MAX_QUEUE_SIZE = 100;
     private boolean shouldKill = false;
     private RoutingTable routingTable = new RoutingTable();
-    private final Communicator communicator;
+    private Communicator communicator;
     private final FileHandler fileHandler;
 
     private MessageHandler() {
-        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-        communicator = Communicator.getInstance();
+        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);        
         fileHandler = new FileHandler();
         node = Node.getInstance();
+    }
+    
+    public void setCommunicator(Communicator communicator){
+        this.communicator = communicator;
     }
 
     public boolean isShouldKill() {
