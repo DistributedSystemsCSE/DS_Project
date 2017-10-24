@@ -46,6 +46,13 @@ public class Host {
     }
 
     @Override
+    public String toString() {
+        return "Host{" + "ip=" + ip + ", port=" + port + '}';
+    }
+    
+    
+
+    @Override
     public int hashCode() {
         int hash = 7;
         return hash;

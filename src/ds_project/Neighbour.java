@@ -76,6 +76,8 @@ public class Neighbour extends Host{
         }
         return true;
     }
+    
+    
 
     /**
      * @return the isAlive

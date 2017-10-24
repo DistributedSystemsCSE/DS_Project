@@ -82,7 +82,7 @@ public class Node extends Host{
             try{
                 connected = neighbours[0].sendJoinAsFirstNeighbour();
             }catch(BsRegisterException ex){
-                System.out.println(ex.getMessage());
+                System.err.println(ex.getMessage());
                 unregister();
                 return false;
             }
@@ -175,6 +175,11 @@ public class Node extends Host{
         }else{
             return neighbours_list.toArray(new Neighbour[0]);
         }
+    }
+    
+    public void showNeighbours(){
+        neighbours_list.stream()
+                .forEach(neighbours_->System.out.println(neighbours_));
     }
     
     public void sendToNeighboursExcept(String message,Neighbour neighbour){
