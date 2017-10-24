@@ -28,6 +28,7 @@ public class MessageHandler implements Runnable {
         message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
         fileHandler = new FileHandler();
         node = Node.getInstance();
+        message_list = new ArrayList<>();
     }
 
     public void setCommunicator(Communicator communicator) {
