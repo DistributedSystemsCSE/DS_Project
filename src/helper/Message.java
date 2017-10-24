@@ -70,6 +70,17 @@ public class Message {
     }
     
     //NEW
+    public Message(MessageType type, String ip, int port, String ip_forwarding, 
+            int port_forwarding, String fileNanme, int hops){
+        switch(type){
+            case SER:
+                message=appendLength("SER"+" "+ip+" "+port+" "+ip_forwarding+" "
+                        +port_forwarding+" "+fileNanme+" "+hops);
+                break;
+        }
+    }
+    
+    //NEW
     public Message(MessageType type, int noOfFiles, String fileDestinationIp,
             int fileDestinationPort, String forwarding_IP, int forwarding_port,
             int hops, String searchedFile, List<String> files){
