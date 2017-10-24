@@ -25,7 +25,7 @@ public class Neighbour extends Host{
                 .getMessage();
         com.send(message, ip, port,-1);
         String responce = com.receiveWithTimeout();
-        System.out.println(responce);
+        System.out.println("A: "+responce);
         return MessageHandler.getInstance()
                 .decodeInitialJoinResponse(responce);
     }
