@@ -109,7 +109,7 @@ public class MessageHandler implements Runnable {
 
          Search
          length SER IP port forwarding_IP forwarding_port file_name hops timestamp
-         length SEROK no_files IP port hops filename1 filename2 ... ... timestamp
+         length SEROK no_files IP port hops searchedFile filename1 filename2 ... ... timestamp
         
          Requist Neighbours
          length NEREQ IP port count timestamp
@@ -148,6 +148,7 @@ public class MessageHandler implements Runnable {
                                 ip,
                                 port,
                                 (hops + 1),
+                                fileName,
                                 searchFiles)).getMessage();
                         communicator.sendToPeer(resMsg, ip, port);
 
