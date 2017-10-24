@@ -6,18 +6,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketTimeoutException;
-import java.util.Observable;
 
 /**
  *
  * @author Hareen Udayanath
  */
 public class Communicator implements Runnable{
-    private final String serverIP;
-    private final String clientIP;
-    private final int serverPort;
-    private final int clientPort;
+    private String serverIP;
+    private String clientIP;
+    private int serverPort;
+    private int clientPort;
     private boolean shouldKill = false;
     
     private final Configs configs;
@@ -49,6 +47,34 @@ public class Communicator implements Runnable{
      */
     public void setShouldKill(boolean shouldKill) {
         this.shouldKill = shouldKill;
+    }
+
+    /**
+     * @param serverIP the serverIP to set
+     */
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
+    }
+
+    /**
+     * @param clientIP the clientIP to set
+     */
+    public void setClientIP(String clientIP) {
+        this.clientIP = clientIP;
+    }
+
+    /**
+     * @param serverPort the serverPort to set
+     */
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    /**
+     * @param clientPort the clientPort to set
+     */
+    public void setClientPort(int clientPort) {
+        this.clientPort = clientPort;
     }
     
     private static class InstanceHolder{
@@ -90,6 +116,7 @@ public class Communicator implements Runnable{
     public String receiveFromBS(){
        return receive(clientPort, false);
     }
+    
     
     /* 
      * To send available port, use port = -1

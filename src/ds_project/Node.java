@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class Node extends Host{
     
-    private final String name;
+    private String name;
     private final Configs configs;
     private final int timeout;
     private final int max_number_of_neighbours;
@@ -47,6 +47,17 @@ public class Node extends Host{
         com.setMessageHandler(mh);
         mh.setCommunicator(com);
     }
+
+    public Communicator getCommunicator(){
+        return com;
+    }
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
     
     private static class InstanceHolder{
         static Node instance = new Node();
@@ -55,7 +66,8 @@ public class Node extends Host{
     public static Node getInstance(){
         return InstanceHolder.instance;
     }
-        
+     
+   
        
     public boolean register(){
         Neighbour[] neighbours = null;
