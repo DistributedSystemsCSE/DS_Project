@@ -64,13 +64,13 @@ public class Message {
     
     //NEW
     public Message(MessageType type, int noOfFiles, String fileDestinationIp,
-            int fileDestinationPort, int hops, List<String> files){
+            int fileDestinationPort, int hops, String searchedFile, List<String> files){
 
         switch(type){
         
             case SEROK: 
             {
-                String filesString="";
+                String filesString=searchedFile;
                 for (String file : files) {
                     filesString = filesString +" "+ file;
                 }
