@@ -14,7 +14,11 @@ import java.util.stream.IntStream;
  */
 public class FileHandler {
     
-    private final List<String> fileNames = getRandomFileNames();
+    private final List<String> fileNames;
+    
+    public FileHandler(){
+        fileNames=getRandomFileNames();
+    }
     
     public String[] getAllFileNames() {
         try {
