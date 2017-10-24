@@ -13,6 +13,14 @@ import java.util.stream.IntStream;
  * @author Buddhi
  */
 public class FileHandler {
+    
+    private List<String> fileNames;
+
+    public FileHandler() {
+        fileNames = getRandomFileNames();
+    }
+    
+    
 
     public String[] getAllFileNames() {
         try {
@@ -58,7 +66,6 @@ public class FileHandler {
     }
 
     public List<String> getSimilarFileNames(String name) {
-        String[] fileNames = getAllFileNames();
         List<String> selectFile = new ArrayList<>();
         for (String fn : fileNames) {
             if (fn.toLowerCase().contains(name.toLowerCase())) {
@@ -77,8 +84,8 @@ public class FileHandler {
             System.out.println(name);
         });
 
-//        String fnm = "windows";
-//        System.out.println(fnm + ": " + fh.getSimilarFileNames(fnm));
+        String fnm = "windows";
+        System.out.println(fnm + ": " + fh.getSimilarFileNames(fnm));
     }
 
 }
