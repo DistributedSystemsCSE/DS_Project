@@ -32,6 +32,10 @@ public class Configs {
         return getIntegerProperty("TIME_OUT_RECEIVE");        
     }
     
+     public int getTimeoutForFirstTwo(){
+        return getIntegerProperty("TIME_OUT_RECEIVE");        
+    }
+    
     public int getNeighbourSetterTimeout(){
         return getIntegerProperty("TIME_OUT_NEIGHBOUR_SETTER");        
     }
