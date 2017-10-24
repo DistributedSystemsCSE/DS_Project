@@ -50,11 +50,12 @@ public class Neighbour extends Host{
         this.com = com;
     }
 
-    public Neighbour[] getNeighbours(int size){
-        //TODO
-        // send message to the node and get required neighbours
-        Neighbour[] neighbours = null;
-        return neighbours;
+    public void sendNeighbourRequest(int size,String ip_sernder,int port){
+        
+        String message = (new Message(MessageType.NEREQ, 
+                                    ip_sernder, port, size)).getMessage();
+        com.sendToPeer(message, ip, port);
+        
     }
     
     @Override

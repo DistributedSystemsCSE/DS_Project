@@ -270,12 +270,11 @@ public class Node extends Host{
                         
                     }
                 }
-                Neighbour[] new_neighbours = getRandomNeighbour()
-                        .getNeighbours(size);
-                for(Neighbour neighbour:new_neighbours){
-                    neighbour.sendJoin(ip,port);
+                synchronized(neighbours_list){
+                    neighbours_list.stream().forEach((neighbour) -> {
+                        neighbour.sendNeighbourRequest(size,ip,port);
+                    });
                 }
-                
                 try {
                     Thread.sleep(timeout_neighbour);                    
                 } catch (InterruptedException ex) {
