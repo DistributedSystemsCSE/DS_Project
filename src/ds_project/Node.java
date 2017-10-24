@@ -165,7 +165,7 @@ public class Node extends Host{
         int list_size = neighbours_list.size();
         if(size<list_size){
             Neighbour[] neighbours = new Neighbour[size];
-            ArrayList<Integer> list = new ArrayList<Integer>();
+            ArrayList<Integer> list = new ArrayList<>();
             for (int i=1; i<list_size; i++) {
                 list.add(i);
             }
