@@ -70,6 +70,12 @@ public class NodeGUI extends javax.swing.JFrame {
         txtaDetails.setRows(5);
         jScrollPane3.setViewportView(txtaDetails);
 
+        txtPort.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtPortMouseClicked(evt);
+            }
+        });
+
         btnSetPort.setText("Set Port");
         btnSetPort.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -152,8 +158,12 @@ public class NodeGUI extends javax.swing.JFrame {
     private void btnSetPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetPortActionPerformed
 //        System.out.println(txtPort.getText());
 //        System.out.println(configs.getStringProperty("CLIENT_PORT"));
-//        configs.setProperty("CLIENT_PORT", txtPort.getText());
+        configs.setProperty("CLIENT_PORT", txtPort.getText());
     }//GEN-LAST:event_btnSetPortActionPerformed
+
+    private void txtPortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtPortMouseClicked
+        txtPort.setText(configs.getStringProperty("CLIENT_PORT"));
+    }//GEN-LAST:event_txtPortMouseClicked
 
     /**
      * @param args the command line arguments
