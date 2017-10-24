@@ -20,8 +20,8 @@ public class Neighbour extends Host{
         com = Communicator.getInstance();
     }
     
-    public boolean sendJoinAsFirstNeighbour() throws BsRegisterException{
-        String message = (new Message(MessageType.JOIN, ip, port))
+    public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) throws BsRegisterException{
+        String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         com.send(message, ip, port,-1);
         String responce = com.receiveWithTimeout();

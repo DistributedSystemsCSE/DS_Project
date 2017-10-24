@@ -83,7 +83,7 @@ public class Node extends Host{
             // add neighbour search     
             boolean connect = false;
             try{
-                connect = neighbours[0].sendJoinAsFirstNeighbour();
+                connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
             }catch(BsRegisterException ex){
                 ex.printStackTrace();
                 connect = false;
