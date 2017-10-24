@@ -42,7 +42,7 @@ public class RoutingTable {
         }
     }
 
-    public void removeFromTable(String ip, String port) {
+    public void removeFromTable(String ip, int port) {
         hashTable.remove(ip + ":" + port);
         //Remove if it contain as an gateway
         ArrayList<String> al = new ArrayList<>();
@@ -58,5 +58,9 @@ public class RoutingTable {
         al.stream().forEach((obj) -> {
             hashTable.remove(obj);
         });
+    }
+    
+    public boolean isInTable(String ip,int port){
+        return hashTable.containsKey(ip+":"+port);
     }
 }
