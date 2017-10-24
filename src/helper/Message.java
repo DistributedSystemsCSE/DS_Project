@@ -33,6 +33,12 @@ public class Message {
             case JOINOK:
                 message = appendLength("JOINOK"+" "+ip+" "+port);
                 break;
+            case ALIVE:
+                message = appendLength("ALIVE"+" "+ip+" "+port);
+                break;
+            case ISALIVE:
+                message = appendLength("ISALIVE"+" "+ip+" "+port);
+                break;
         }
     }
     

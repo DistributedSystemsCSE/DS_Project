@@ -262,9 +262,22 @@ public class MessageHandler implements Runnable {
                     node.removeNeighbour(new Neighbour(ip, port));
                 }
                 break;
-            case "LEAVEOK":
+            case "ISALIVE":
+                if(!addMessage(message)){
+                    ip = mes[2];
+                    port = Integer.parseInt(mes[3]);
+                    String resMsg = (new Message(MessageType.ALIVE,
+                            node.getIp(),
+                            node.getPort())).getMessage();
+                    communicator.sendToPeer(resMsg, ip, port);
+                }
                 break;
-            case "ERROR":
+            case "ALIVE":
+//                if(!addMessage(message)){
+//                    ip = mes[2];
+//                    port = Integer.parseInt(mes[3]);
+//                    
+//                }
                 break;
 
             default:
