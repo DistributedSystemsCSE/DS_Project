@@ -196,6 +196,7 @@ public class Node extends Host{
     }
     
     public void showNeighbours(){
+        System.out.println(neighbours_list.size());
         neighbours_list.stream()
                 .forEach(neighbours_->System.out.println(neighbours_));
     }
@@ -243,6 +244,14 @@ public class Node extends Host{
     
     public boolean removeNeighbour(Neighbour neb){
         return neighbours_list.remove(neb);
+    }
+    
+    /*
+     * Searching......................
+     */
+    
+    public void seachFile(String query){
+        //String message = (new Message(MessageType.REG, ip, port, ip, port, name, port, ip))
     }
     
     private class NeighbourSetter implements Runnable{

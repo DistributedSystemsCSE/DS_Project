@@ -90,6 +90,7 @@ public class Communicator implements Runnable{
         
         while(!shouldKill){            
             String responce = receive(clientPort, false);
+            System.out.println("receiver: "+responce);
             if(responce != null){                               
                 messageHandler.putMessage(responce);
             }            

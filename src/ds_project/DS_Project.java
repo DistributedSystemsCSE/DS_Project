@@ -38,6 +38,16 @@ public class DS_Project {
         }
         node.register();
         
+        while(true){
+            
+            node.showNeighbours();
+            try {
+                Thread.sleep(1000);                    
+            } catch (InterruptedException ex) {
+
+            }
+        }
+        
         
         
     }
