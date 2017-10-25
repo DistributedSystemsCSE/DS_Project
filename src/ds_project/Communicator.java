@@ -19,16 +19,19 @@ public class Communicator implements Runnable{
     private boolean shouldKill = false;
     private DatagramSocket socket_re = null;
     private final Configs configs;
-    private final int timeout;    
+    private int timeout;    
     private MessageHandler messageHandler;
     
     private Communicator(){
-        configs = new Configs();
+        configs = new Configs();        
+    }
+    
+    public void configureVariables(){
         timeout = configs.getReceiverTimeout();
         serverIP = configs.getServerIP();
         clientIP = configs.getClientIP();
         clientPort = configs.getClientPort();        
-        serverPort = configs.getServerPort();          
+        serverPort = configs.getServerPort();     
     }
     
     public void setMessageHandler(MessageHandler messageHandler){
@@ -125,7 +128,7 @@ public class Communicator implements Runnable{
     
       
     public String receiveFromBS()throws IOException{
-       return receive(clientPort, false);
+       return receive(clientPort, true);
     }
     
     
@@ -134,54 +137,44 @@ public class Communicator implements Runnable{
      * otherwise port has to be specifed
      */
     public String receive(int port,boolean isTimeout) throws IOException{
-        socket_re = null;
-        try{
-            if(port==-1)
-                socket_re = new DatagramSocket();
-            else
-                socket_re = new DatagramSocket(port); 
-            
-            if(isTimeout)
-                socket_re.setSoTimeout(timeout);
-            
-            byte[] buf = new byte[65536];  
-            DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-            socket_re.receive(incoming);  
-            String str = new String(incoming.getData(), 0, 
-                    incoming.getLength());               
-            return str;
+        
+        socket_re = null;        
+        if(port==-1)
+            socket_re = new DatagramSocket();
+        else
+            socket_re = new DatagramSocket(port); 
 
-        }catch(IOException ex){
-            return null;
-        }finally{
-            if(socket_re!=null)
-                socket_re.close();            
-        }
+        if(isTimeout)
+            socket_re.setSoTimeout(timeout);
+
+        byte[] buf = new byte[65536];  
+        DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
+        socket_re.receive(incoming);  
+        String str = new String(incoming.getData(), 0, 
+                incoming.getLength()); 
+        socket_re.close();
+        return str;
+
     }
     
     public void send(String message,String ip,int port,int send_port)
             throws IOException{
+        
         DatagramSocket socket = null;
-        try{
-            if(send_port==-1)
-                socket = new DatagramSocket();
-            else
-                socket = new DatagramSocket(send_port);
-            
-            InetAddress IPAddress = InetAddress.getByName(ip);            
-            byte[] toSend  = message.getBytes(); 		  
-            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
-                    IPAddress, port); 
-            
-            socket.send(packet);
-            
-        }catch(IOException ioe){
-            ioe.printStackTrace();
-	}finally{
-            System.out.println("Send........");
-            if(socket!=null)
-                socket.close();
-        }       
+
+        if(send_port==-1)
+            socket = new DatagramSocket();
+        else
+            socket = new DatagramSocket(send_port);
+
+        InetAddress IPAddress = InetAddress.getByName(ip);            
+        byte[] toSend  = message.getBytes(); 		  
+        DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
+                IPAddress, port); 
+
+        socket.send(packet);
+        socket.close();                       
+             
     }
     
     
