@@ -2,12 +2,15 @@ package helper;
 
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Observable;
+import java.util.Observer;
+
 
 /**
  *
  * @author Hareen Udayanath
  */
-public class SearchResultTable {
+public class SearchResultTable extends Observable{
     private final Hashtable<String, HashSet<SearchResult>> searchTable;
 
     public SearchResultTable() {
@@ -19,10 +22,13 @@ public class SearchResultTable {
             searchTable.put(keyWord, new HashSet<>());
         }
         searchTable.get(keyWord).add(result);
+        setChanged();
+        notifyObservers();
     }
     
     public HashSet<SearchResult> getResults(String keyWord){
         return searchTable.get(keyWord);
     }
-       
+
+           
 }

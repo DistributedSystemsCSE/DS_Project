@@ -1,6 +1,6 @@
 package helper;
 
-import ds_project.Neighbour;
+import ds_project.Host;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -9,14 +9,14 @@ import java.util.Objects;
  * @author Hareen Udayanath
  */
 public class SearchResult {
-    private Neighbour neighbour;
+    private Host neighbour;
     private String[] files;
     
     public SearchResult(){
         
     }
     
-    public SearchResult(Neighbour neighbour,String[] files){
+    public SearchResult(Host neighbour,String[] files){
         this.neighbour = neighbour;
         this.files = files;
     }
@@ -24,14 +24,14 @@ public class SearchResult {
     /**
      * @return the neighbour
      */
-    public Neighbour getNeighbour() {
+    public Host getNeighbour() {
         return neighbour;
     }
 
     /**
      * @param neighbour the neighbour to set
      */
-    public void setNeighbour(Neighbour neighbour) {
+    public void setNeighbour(Host neighbour) {
         this.neighbour = neighbour;
     }
 
