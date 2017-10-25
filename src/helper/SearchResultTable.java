@@ -3,7 +3,6 @@ package helper;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Observable;
-import java.util.Observer;
 
 
 /**
@@ -12,6 +11,7 @@ import java.util.Observer;
  */
 public class SearchResultTable extends Observable{
     private final Hashtable<String, HashSet<SearchResult>> searchTable;
+    private String search_keyword;
 
     public SearchResultTable() {
         this.searchTable = new Hashtable<>();
@@ -22,6 +22,7 @@ public class SearchResultTable extends Observable{
             searchTable.put(keyWord, new HashSet<>());
         }
         searchTable.get(keyWord).add(result);
+        search_keyword = keyWord;
         setChanged();
         notifyObservers();
     }
@@ -30,5 +31,8 @@ public class SearchResultTable extends Observable{
         return searchTable.get(keyWord);
     }
 
+    public String getUpdatedKeyword(){
+        return search_keyword;
+    }
            
 }

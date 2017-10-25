@@ -74,8 +74,19 @@ public class SearchResult {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        String files_ = "";
+        for(String file:files){
+            files_+=file+",";
+        }
+        if(files_.length()>0)
+            files_ = files_.substring(0, files_.length()-1);
+        return "neighbour=" + neighbour 
+                + ", files=" + files_;
+    }
     
-    
-    
+      
     
 }
