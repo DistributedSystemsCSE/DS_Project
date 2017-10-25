@@ -14,10 +14,10 @@ import java.util.stream.IntStream;
  */
 public class FileHandler {
     
-    private final List<String> fileNames;
+    private final List<String> fileNames =  getRandomFileNames();
     
     public FileHandler(){
-        fileNames=getRandomFileNames();
+        
     }
     
     public String[] getAllFileNames() {
@@ -71,6 +71,10 @@ public class FileHandler {
             }
         }
         return selectFile;
+    }
+    
+    public List<String> getFileNames(){
+        return fileNames;
     }
 
     public static void main(String[] args) {
