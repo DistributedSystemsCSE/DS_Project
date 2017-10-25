@@ -28,6 +28,8 @@ public class DS_Project {
         
 //        Thread receiver = new Thread(Communicator.getInstance());
 //        receiver.start();
+        
+        
 //        Node node = Node.getInstance();
 //        if(args.length==5){
 //            node.getCommunicator().setServerIP(args[0]);
@@ -39,7 +41,16 @@ public class DS_Project {
 //            node.setName(args[4]);            
 //        }
 //        node.register();
-        
+//        
+//        while(true){
+//            
+//            node.showNeighbours();
+//            try {
+//                Thread.sleep(1000);                    
+//            } catch (InterruptedException ex) {
+//
+//            }
+//        }
         
           JFrame frame = new NodeGUI();
           frame.setVisible(true);

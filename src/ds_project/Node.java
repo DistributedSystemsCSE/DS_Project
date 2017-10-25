@@ -2,6 +2,7 @@ package ds_project;
 
 import configs.Configs;
 import helper.BsRegisterException;
+import helper.FileHandler;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
@@ -27,6 +28,7 @@ public class Node extends Host{
     private Communicator com = null;
     private MessageHandler mh = null;
     private final List<Neighbour> neighbours_list;
+    private final FileHandler fileHandler;
     
     private Node(){
         
@@ -40,8 +42,10 @@ public class Node extends Host{
         
         super.setIp(configs.getClientIP());
         super.setPort(configs.getClientPort());
+        fileHandler = new FileHandler();
         
         mh = MessageHandler.getInstance();
+        mh.setFileHandler(fileHandler);
         mh.setNode(this);
         com = Communicator.getInstance();
         com.setMessageHandler(mh);
@@ -50,6 +54,10 @@ public class Node extends Host{
 
     public Communicator getCommunicator(){
         return com;
+    }
+    
+    public List<String> getFileNames(){
+        return fileHandler.getFileNames();
     }
     
     /**
@@ -90,6 +98,8 @@ public class Node extends Host{
             // add neighbour search
             Thread neighbourSetter = new Thread(new NeighbourSetter());
             neighbourSetter.start();
+//            Thread neighbourChecker = new Thread(new NeighbourChecker());
+//            neighbourChecker.start();
             startReceiving();
             return true;
         }else if(neighbours.length==1){
@@ -97,6 +107,8 @@ public class Node extends Host{
             // add neighbour search 
             Thread neighbourSetter = new Thread(new NeighbourSetter());
             neighbourSetter.start();
+//            Thread neighbourChecker = new Thread(new NeighbourChecker());
+//            neighbourChecker.start();
             boolean connect = false;
             try{
                 connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
@@ -165,6 +177,8 @@ public class Node extends Host{
         
         Thread neighbourSetter = new Thread(new NeighbourSetter());
         neighbourSetter.start();
+//        Thread neighbourChecker = new Thread(new NeighbourChecker());
+//        neighbourChecker.start();
         return true;
     }
     
@@ -333,7 +347,7 @@ public class Node extends Host{
             synchronized(neighbours_list){
                 neighbours_list.stream().forEach((neighbour) -> {
                     neighbour.setAlive(false);
-                    neighbour.sendIsAlive();
+                    neighbour.sendIsAlive(ip,port);
                 });
             }
             

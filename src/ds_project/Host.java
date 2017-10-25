@@ -49,12 +49,12 @@ public class Host {
     public String toString() {
         return "Host{" + "ip=" + ip + ", port=" + port + '}';
     }
-    
-    
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.ip);
+        hash = 29 * hash + this.port;
         return hash;
     }
 
@@ -75,6 +75,5 @@ public class Host {
         }
         return true;
     }
-    
-    
+       
 }
