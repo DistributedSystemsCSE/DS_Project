@@ -152,11 +152,14 @@ public class MessageHandler implements Runnable {
 
                     // check for files and send responce
                     String fileName = mes[6];
+                    //Replcae "_" with " "
+                    fileName=fileName.replace("_", " ");
                     List<String> searchFiles = fileHandler.getSimilarFileNames(fileName);
                     int noOfFiles = searchFiles.size();
                     searchFiles = replaceSpace(searchFiles);
 
                     // sent search respons
+                    if(noOfFiles>0){
                     String resMsg = (new Message(MessageType.SEROK,
                             noOfFiles,
                             ip,
@@ -166,7 +169,8 @@ public class MessageHandler implements Runnable {
                             (hops + 1),
                             fileName,
                             searchFiles)).getMessage();
-                    communicator.sendToPeer(resMsg, ip, port);
+                    sendMessage(resMsg, ip, port);
+                    }
 
                     // broadcast mesagge searchFile
                     if (hops < maxHopCount) {
@@ -228,7 +232,7 @@ public class MessageHandler implements Runnable {
                             node.getIp(),
                             node.getPort())).getMessage();
                     System.out.println("res:" + resMsg);
-                    communicator.sendToPeer(resMsg, ip, port);
+                    sendMessage(resMsg, ip, port);
                 }
                 break;
             case "JOINOK":
@@ -266,7 +270,7 @@ public class MessageHandler implements Runnable {
                             neighboursCount,
                             ipList,
                             portList)).getMessage();
-                    communicator.sendToPeer(resMsg, ip, port);
+                    sendMessage(resMsg, ip, port);
                 }
                 break;
             case "NERRES":
@@ -285,7 +289,7 @@ public class MessageHandler implements Runnable {
                                     node.getIp(),
                                     node.getPort())).getMessage();
                             System.out.println("Sending new neighbour joinok:" + resMsg);
-                            communicator.sendToPeer(resMsg, ip, port);
+                            sendMessage(resMsg, ip, port);
                         }
                     }
                 }
@@ -304,7 +308,7 @@ public class MessageHandler implements Runnable {
                     String resMsg = (new Message(MessageType.ALIVE,
                             node.getIp(),
                             node.getPort())).getMessage();
-                    communicator.sendToPeer(resMsg, ip, port);
+                    sendMessage(resMsg, ip, port);
                 }
                 break;
             case "ALIVE":
@@ -420,5 +424,13 @@ public class MessageHandler implements Runnable {
             replacedFilenames.add(filename.replace("_", " "));
         });
         return replacedFilenames;
+    }
+    
+    private void sendMessage(String message, String ip, int port){
+        try {
+            communicator.sendToPeer(message, ip, port);
+        } catch (Exception e) {
+            System.out.println("Exception while sending (MH): "+e.toString());
+        }
     }
 }

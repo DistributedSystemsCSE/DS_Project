@@ -69,6 +69,7 @@ public class Message {
             int port_forwarding, String fileNanme, int hops, String timeStamp){
         switch(type){
             case SER:
+                fileNanme=fileNanme.replace(" ", "_");
                 message=appendLengthWithOutTime("SER"+" "+ip+" "+port+" "+ip_forwarding+" "
                         +port_forwarding+" "+fileNanme+" "+hops+" "+timeStamp);
                 break;

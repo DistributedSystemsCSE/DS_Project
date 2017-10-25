@@ -90,7 +90,7 @@ public class FileHandler {
             System.out.println(name);
         });
 
-        String fnm = "windows";
+        String fnm = "The Vampire";
         System.out.println(fnm + ": " + fh.getSimilarFileNames(fnm));
     }
 
