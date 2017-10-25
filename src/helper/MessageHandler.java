@@ -192,7 +192,7 @@ public class MessageHandler implements Runnable {
                 if (!addMessage(message)) {
                     ip = mes[5];
                     port = Integer.parseInt(mes[6]);
-                    String keyword = mes[8];
+                    String keyword = mes[8].replace("_", " ");
                     //show search results
                     int count = Integer.parseInt(mes[2]);
                     if (count > 0) {
