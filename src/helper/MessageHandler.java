@@ -406,7 +406,7 @@ public class MessageHandler implements Runnable {
             throws BsRegisterException {
         String[] mes = message.split(" ");
 //        int no_nodes = Integer.parseInt(mes[2]);
-        if(mes[1].equals("UNROK") && mes[1].equals("0")){
+        if(mes[1].equals("UNROK") && mes[2].equals("0")){
             return true;
         }
         else{
