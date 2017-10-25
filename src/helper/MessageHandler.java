@@ -22,14 +22,16 @@ public class MessageHandler implements Runnable {
     private boolean shouldKill = false;
     private RoutingTable routingTable = new RoutingTable();
     private Communicator communicator;
-    private final FileHandler fileHandler;
+    private FileHandler fileHandler;
 
     private MessageHandler() {
-        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-        fileHandler = new FileHandler();
+        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);        
         message_list = new ArrayList<>();
     }
 
+    public void setFileHandler(FileHandler fileHandler){
+        this.fileHandler = fileHandler;
+    }
     public void setNode(Node node) {
         this.node = node;
     }
