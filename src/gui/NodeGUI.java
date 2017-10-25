@@ -5,6 +5,8 @@ import ds_project.Node;
 import helper.SearchResult;
 import helper.SearchResultTable;
 import java.io.IOException;
+import java.net.BindException;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
@@ -54,6 +56,10 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         txtName = new javax.swing.JTextField();
         btnSetName = new javax.swing.JButton();
         btnStop = new javax.swing.JButton();
+        txtServerPort = new javax.swing.JTextField();
+        btnSetServerPort = new javax.swing.JButton();
+        txtServerIP = new javax.swing.JTextField();
+        btnSetServerIP = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         btnShowNeighbours = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -145,7 +151,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 .addContainerGap()
                 .addComponent(btnShowFiles)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -219,6 +225,42 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             }
         });
 
+        txtServerPort.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtServerPortMouseClicked(evt);
+            }
+        });
+        txtServerPort.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtServerPortActionPerformed(evt);
+            }
+        });
+
+        btnSetServerPort.setText("Set Server Port");
+        btnSetServerPort.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSetServerPortActionPerformed(evt);
+            }
+        });
+
+        txtServerIP.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtServerIPMouseClicked(evt);
+            }
+        });
+        txtServerIP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtServerIPActionPerformed(evt);
+            }
+        });
+
+        btnSetServerIP.setText("Set Server IP");
+        btnSetServerIP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSetServerIPActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -226,24 +268,33 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel4Layout.createSequentialGroup()
-                            .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel4Layout.createSequentialGroup()
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnSetIP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnSetPort, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
-                            .addGap(0, 0, Short.MAX_VALUE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSetName, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)))
+                        .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSetName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(txtServerIP, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSetServerIP, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(txtServerPort, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSetServerPort, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSetIP, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSetPort, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -251,17 +302,25 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSetIP))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSetPort)
-                    .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(btnSetServerIP)
+                    .addComponent(txtServerIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSetServerPort)
+                    .addComponent(txtServerPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSetIP)
+                    .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSetPort))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSetName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
                     .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -289,7 +348,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(btnShowNeighbours)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -317,21 +376,23 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlShowFiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(332, 332, 332)
+                        .addComponent(pnlShowFiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(79, 79, 79))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlShowFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 207, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -361,24 +422,41 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         node = Node.getInstance();
+        node.configureVariables();
         searchResultTable = node.getSearchResultTable();
         searchResultTable.addObserver(this);
         try{
-            node.register();
-        }catch(IOException ex){
+            
+            if(node.register()){
+                btnSetIP.setEnabled(false);
+                txtIP.setEditable(false);
+                btnSetPort.setEnabled(false);
+                txtPort.setEditable(false);
+                btnSetName.setEnabled(false);
+                txtName.setEditable(false);
+                btnSetServerIP.setEnabled(false);
+                txtServerIP.setEditable(false);
+                btnSetServerPort.setEnabled(false);
+                txtServerPort.setEditable(false);
+
+                btnSearch.setEnabled(true);
+                btnShowFiles.setEnabled(true);
+                btnShowNeighbours.setEnabled(true);
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "Could not register. Check the server");  
+            }
+        }catch(BindException ex){    
+            JOptionPane.showMessageDialog(this,"the port is already using"); 
+        }catch(SocketTimeoutException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Unable to communicate with server\n"
+                            + "Registation fail"); 
+        }catch(IOException ex){            
             JOptionPane.showMessageDialog(this,ex.getMessage());  
         }
          
-        btnSetIP.setEnabled(false);
-        txtIP.setEditable(false);
-        btnSetPort.setEnabled(false);
-        txtPort.setEditable(false);
-        btnSetName.setEnabled(false);
-        txtName.setEditable(false);
         
-        btnSearch.setEnabled(true);
-        btnShowFiles.setEnabled(true);
-        btnShowNeighbours.setEnabled(true);
          
     }//GEN-LAST:event_btnStartActionPerformed
 
@@ -429,15 +507,24 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         txtName.setText(configs.getStringProperty("CLIENT_NAME"));
         txtIP.setText(configs.getStringProperty("CLIENT_IP"));
         txtPort.setText(configs.getStringProperty("CLIENT_PORT"));
+        txtServerIP.setText(configs.getStringProperty("SERVER_IP"));
+        txtServerPort.setText(configs.getStringProperty("SERVER_PORT"));
         
         btnSearch.setEnabled(false);
         btnShowFiles.setEnabled(false);
         btnShowNeighbours.setEnabled(false);
+        
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try{
-            node.unregister();
+            if(node!=null)
+                node.unregister();
+            
+        }catch(SocketTimeoutException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Unable to communicate with server\n"
+                            + "Unregistation fail"); 
         }catch(IOException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage());  
         }
@@ -446,7 +533,12 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
         try{
-            node.unregister();
+            if(node!=null)
+                node.unregister();
+        }catch(SocketTimeoutException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Unable to communicate with server\n"
+                            + "Unregistation fail"); 
         }catch(IOException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage());  
         }
@@ -454,11 +546,36 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         try{
-            node.unregister();
+            if(node!=null)
+                node.unregister();
         }catch(IOException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage());  
         }
     }//GEN-LAST:event_formWindowClosed
+
+    private void txtServerPortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtServerPortMouseClicked
+        txtServerIP.setText(configs.getStringProperty("SERVER_PORT"));
+    }//GEN-LAST:event_txtServerPortMouseClicked
+
+    private void txtServerPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtServerPortActionPerformed
+        configs.setProperty("SERVER_PORT", txtServerPort.getText());
+    }//GEN-LAST:event_txtServerPortActionPerformed
+
+    private void btnSetServerPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetServerPortActionPerformed
+        configs.setProperty("SERVER_PORT", txtServerPort.getText());
+    }//GEN-LAST:event_btnSetServerPortActionPerformed
+
+    private void txtServerIPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtServerIPMouseClicked
+        txtServerIP.setText(configs.getStringProperty("SERVER_IP"));
+    }//GEN-LAST:event_txtServerIPMouseClicked
+
+    private void txtServerIPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtServerIPActionPerformed
+        configs.setProperty("SERVER_IP", txtServerIP.getText());
+    }//GEN-LAST:event_txtServerIPActionPerformed
+
+    private void btnSetServerIPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetServerIPActionPerformed
+        configs.setProperty("SERVER_IP", txtServerIP.getText());
+    }//GEN-LAST:event_btnSetServerIPActionPerformed
 
     /**
      * @param args the command line arguments
@@ -500,6 +617,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private javax.swing.JButton btnSetIP;
     private javax.swing.JButton btnSetName;
     private javax.swing.JButton btnSetPort;
+    private javax.swing.JButton btnSetServerIP;
+    private javax.swing.JButton btnSetServerPort;
     private javax.swing.JButton btnShowFiles;
     private javax.swing.JButton btnShowNeighbours;
     private javax.swing.JButton btnStart;
@@ -516,6 +635,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPort;
     private javax.swing.JTextField txtSearch;
+    private javax.swing.JTextField txtServerIP;
+    private javax.swing.JTextField txtServerPort;
     private javax.swing.JTextArea txtaDetails;
     private javax.swing.JTextArea txtaSearch;
     private javax.swing.JTextArea txtaShowFiles;

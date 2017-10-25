@@ -25,7 +25,7 @@ public class Neighbour extends Host{
             throws BsRegisterException,IOException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
-        com.send(message, ip, port,-1);
+        com.sendToPeer(message, ip, port);
         String responce = com.receiveWithTimeout();
         System.out.println("A: "+responce);
         if(responce==null)
@@ -37,11 +37,11 @@ public class Neighbour extends Host{
     public void sendJoin(String ip_sender,int port_sender) throws IOException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
-        com.send(message, ip, port,-1);
+        com.sendToPeer(message, ip, port);
     }
     
     public void sendMessage(String message)throws IOException{        
-        com.send(message, ip, port,-1);
+        com.sendToPeer(message, ip, port);
     }
     
     public void sendSearchRequest(String query,String ip_sender,int port_sender)

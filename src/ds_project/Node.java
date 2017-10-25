@@ -24,8 +24,8 @@ public class Node extends Host{
     
     private String name;
     private final Configs configs;
-    private final int timeout;
-    private final int max_number_of_neighbours;
+    private int timeout;
+    private int max_number_of_neighbours;
     private final Random randomGenerator;
     private Communicator com = null;
     private MessageHandler mh = null;
@@ -36,15 +36,8 @@ public class Node extends Host{
     private Node(){
         
         configs = new Configs();
-        neighbours_list = new ArrayList<>();
-        name = configs.getClientName();
-        
-        timeout = configs.getTimeoutForFirstTwo();
-        max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
-        randomGenerator = new Random();
-        
-        super.setIp(configs.getClientIP());
-        super.setPort(configs.getClientPort());
+        neighbours_list = new ArrayList<>();       
+        randomGenerator = new Random();       
         fileHandler = new FileHandler();
         
         searchResultTable = new SearchResultTable();
@@ -54,6 +47,17 @@ public class Node extends Host{
         com = Communicator.getInstance();
         com.setMessageHandler(mh);
         mh.setCommunicator(com);
+        
+        this.configureVariables();
+    }
+    
+    public void configureVariables(){
+        super.setIp(configs.getClientIP());
+        super.setPort(configs.getClientPort());
+        name = configs.getClientName();        
+        timeout = configs.getTimeoutForFirstTwo();
+        max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
+        com.configureVariables();
     }
 
     public SearchResultTable getSearchResultTable(){
@@ -90,7 +94,13 @@ public class Node extends Host{
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
         com.sendToBS(str);
+        System.out.println("sssssss");
         String responce = com.receiveFromBS();
+        System.out.println("ssdsdsdsdsdsd");
+        if(responce==null){
+            unregister();
+            return false;
+        }
         try{
             neighbours = MessageHandler.getInstance()
                 .decodeRegisterResponse(responce);
@@ -269,6 +279,10 @@ public class Node extends Host{
                 .getMessage();  
         com.sendToBS(str);
         String responce = com.receiveFromBS();
+        
+        if(responce==null){
+            return false;
+        }
         
         try{
             boolean isUnregistered = MessageHandler.getInstance()
