@@ -72,9 +72,10 @@ public class FileHandler {
 
     public List<String> getSimilarFileNames(String name) {
         Set<String> selectedFiles = new HashSet<>();
-        String[] checkWords = name.split(" ");
+        String[] checkWords = name.toLowerCase().split(" ");
         fileNames.stream().forEach((filename) -> {
-            List<String> fileNameWords = Arrays.asList(filename.split(" "));
+            List<String> fileNameWords = Arrays
+                    .asList(filename.toLowerCase().split(" "));
             for(String checkWord:checkWords){
                 if(fileNameWords.contains(checkWord)){
                     selectedFiles.add(filename);
