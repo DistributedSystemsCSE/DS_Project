@@ -284,11 +284,11 @@ public class MessageHandler implements Runnable {
                 }
                 break;
             case "ALIVE":
-//                if(!addMessage(message)){
-//                    ip = mes[2];
-//                    port = Integer.parseInt(mes[3]);
-//                    
-//                }
+                if(!addMessage(message)){
+                    ip = mes[2];
+                    port = Integer.parseInt(mes[3]);
+                    node.setNeighbourAlive(ip, port);
+                }
                 break;
 
             default:
