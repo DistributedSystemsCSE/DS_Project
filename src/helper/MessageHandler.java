@@ -188,27 +188,29 @@ public class MessageHandler implements Runnable {
                 if (!addMessage(message)) {
                     ip = mes[5];
                     port = Integer.parseInt(mes[6]);
-                    String keyword=mes[8];
+                    String keyword = mes[8];
                     //show search results
                     int count = Integer.parseInt(mes[2]);
-                    List<String> fileNames=new ArrayList<>();
-                    System.out.println("Search results " + mes[8]);
-                    System.out.println("From " + mes[5] + mes[6]);
-                    for (int i = 0; i < count; i++) {
-                        System.out.println(mes[9 + i]);
-                        fileNames.add(mes[9 + i]);
+                    if (count > 0) {
+                        List<String> fileNames = new ArrayList<>();
+                        System.out.println("Search results " + mes[8]);
+                        System.out.println("From " + mes[5] + mes[6]);
+                        for (int i = 0; i < count; i++) {
+                            System.out.println(mes[9 + i]);
+                            fileNames.add(mes[9 + i]);
+                        }
+                        fileNames = replaceUnderscore(fileNames);
+
+                        //create search result object
+                        SearchResult searchResult = new SearchResult(
+                                new Host(ip, port),
+                                fileNames.toArray(new String[0]));
+
+                        node.getSearchResultTable().addToTable(
+                                keyword,
+                                searchResult);
                     }
-                    fileNames=replaceUnderscore(fileNames);
-                    
-                    //create search result object
-                    SearchResult searchResult=new SearchResult(
-                            new Host(ip, port),
-                            fileNames.toArray(new String[0]));
-                    
-                    node.getSearchResultTable().addToTable(
-                            keyword,
-                            searchResult);
-                    
+
                 }
                 break;
             case "JOIN":
