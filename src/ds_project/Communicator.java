@@ -17,7 +17,7 @@ public class Communicator implements Runnable{
     private int serverPort;
     private int clientPort;
     private boolean shouldKill = false;
-    private DatagramSocket socket = null;
+    private DatagramSocket socket_re = null;
     private final Configs configs;
     private final int timeout;    
     private MessageHandler messageHandler;
@@ -101,8 +101,8 @@ public class Communicator implements Runnable{
     }   
     
     public void stopReceiving(){
-        if(socket!=null)
-            socket.close();
+        if(socket_re!=null)
+            socket_re.close();
         this.shouldKill = true;
     }
     
@@ -134,19 +134,19 @@ public class Communicator implements Runnable{
      * otherwise port has to be specifed
      */
     public String receive(int port,boolean isTimeout) throws IOException{
-        
+        socket_re = null;
         try{
             if(port==-1)
-                socket = new DatagramSocket();
+                socket_re = new DatagramSocket();
             else
-                socket = new DatagramSocket(port); 
+                socket_re = new DatagramSocket(port); 
             
             if(isTimeout)
-                socket.setSoTimeout(timeout);
+                socket_re.setSoTimeout(timeout);
             
             byte[] buf = new byte[65536];  
             DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
-            socket.receive(incoming);  
+            socket_re.receive(incoming);  
             String str = new String(incoming.getData(), 0, 
                     incoming.getLength());               
             return str;
@@ -154,14 +154,14 @@ public class Communicator implements Runnable{
         }catch(IOException ex){
             return null;
         }finally{
-            if(socket!=null)
-                socket.close();            
+            if(socket_re!=null)
+                socket_re.close();            
         }
     }
     
     public void send(String message,String ip,int port,int send_port)
             throws IOException{
-        
+        DatagramSocket socket = null;
         try{
             if(send_port==-1)
                 socket = new DatagramSocket();
