@@ -6,6 +6,7 @@ import helper.FileHandler;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
+import helper.SearchResultTable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ public class Node extends Host{
     private MessageHandler mh = null;
     private final List<Neighbour> neighbours_list;
     private final FileHandler fileHandler;
+    private final SearchResultTable searchResultTable;
     
     private Node(){
         
@@ -44,6 +46,7 @@ public class Node extends Host{
         super.setPort(configs.getClientPort());
         fileHandler = new FileHandler();
         
+        searchResultTable = new SearchResultTable();
         mh = MessageHandler.getInstance();
         mh.setFileHandler(fileHandler);
         mh.setNode(this);
@@ -52,6 +55,10 @@ public class Node extends Host{
         mh.setCommunicator(com);
     }
 
+    public SearchResultTable getSearchResultTable(){
+        return this.searchResultTable;
+    }
+    
     public Communicator getCommunicator(){
         return com;
     }
