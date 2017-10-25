@@ -171,8 +171,12 @@ public class Node extends Host{
     
     private boolean connectToTheNetwork(Neighbour nb1,Neighbour nb2){
         boolean connected = false;
+        try{
         nb1.sendJoin(ip,port);
         nb2.sendJoin(ip,port);
+        }catch(IOException ex){
+            return false;
+        }
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)<timeout){
             if(neighbours_list.size()>0){
@@ -252,8 +256,10 @@ public class Node extends Host{
                 .collect(Collectors.toList()); 
         
         neighbours_except.stream().forEach((neighbour_) -> {
-                    neighbour_.sendMessage(message);                    
-                });
+            try{
+                neighbour_.sendMessage(message);      
+            }catch(IOException ex){}
+        });
         
     }
     
@@ -298,7 +304,9 @@ public class Node extends Host{
         
         synchronized(neighbours_list){            
             neighbours_list.stream().forEach((neighbour_) -> {
-               neighbour_.sendSearchRequest(query,ip,port);                    
+                try{
+                    neighbour_.sendSearchRequest(query,ip,port); 
+                }catch(IOException ex){}
            });
         }
     }
@@ -330,7 +338,9 @@ public class Node extends Host{
                 }
                 synchronized(neighbours_list){
                     neighbours_list.stream().forEach((neighbour) -> {
-                        neighbour.sendNeighbourRequest(size,ip,port);
+                        try{
+                            neighbour.sendNeighbourRequest(size,ip,port);
+                        }catch(IOException ex){}
                     });
                 }
                 try {
@@ -356,7 +366,10 @@ public class Node extends Host{
             synchronized(neighbours_list){
                 neighbours_list.stream().forEach((neighbour) -> {
                     neighbour.setAlive(false);
-                    neighbour.sendIsAlive(ip,port);
+                    try{
+                        neighbour.sendIsAlive(ip,port);
+                    }catch(IOException ex){
+                    }
                 });
             }
             
