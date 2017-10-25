@@ -412,7 +412,13 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        
         search_keyword = txtSearch.getText();
+        String result = "";
+        result = searchResultTable.getResults(search_keyword)
+                .stream().map((s_result) -> s_result.toString()+"\n")
+                .reduce(result, String::concat);
+        txtaSearch.setText(result);
         node.seachFile(search_keyword);
     }//GEN-LAST:event_btnSearchActionPerformed
 
@@ -647,9 +653,9 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         if(o==searchResultTable){
             if(searchResultTable.getUpdatedKeyword().equals(search_keyword)){
                 String result = "";
-                for(SearchResult s_result:searchResultTable.getResults(search_keyword)){
-                    result+=s_result.toString()+"\n";
-                }
+                result = searchResultTable.getResults(search_keyword)
+                        .stream().map((s_result) -> s_result.toString()+"\n")
+                        .reduce(result, String::concat);
                 txtaSearch.setText(result);
             }
         }

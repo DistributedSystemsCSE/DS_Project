@@ -157,6 +157,7 @@ public class MessageHandler implements Runnable {
                     List<String> searchFiles = fileHandler.getSimilarFileNames(fileName);
                     int noOfFiles = searchFiles.size();
                     searchFiles = replaceSpace(searchFiles);
+                    fileName=fileName.replace(" ", "_");
 
                     // sent search respons
                     if(noOfFiles>0){
