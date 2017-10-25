@@ -3,9 +3,12 @@ package helper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -68,13 +71,16 @@ public class FileHandler {
     }
 
     public List<String> getSimilarFileNames(String name) {
-        List<String> selectFile = new ArrayList<>();
-        for (String fn : fileNames) {
-            if (fn.toLowerCase().contains(name.toLowerCase())) {
-                selectFile.add(fn);
+        Set<String> selectedFiles = new HashSet<>();
+        String[] checkWords = name.split(" ");
+        fileNames.stream().forEach((filename) -> {
+            List<String> fileNameWords = Arrays.asList(filename.split(" "));
+            for(String checkWord:checkWords){
+                if(fileNameWords.contains(checkWord))
+                    selectedFiles.add(filename);
             }
-        }
-        return selectFile;
+        });
+        return new ArrayList(selectedFiles);
     }
     
     public List<String> getFileNames(){
@@ -90,7 +96,7 @@ public class FileHandler {
             System.out.println(name);
         });
 
-        String fnm = "The Vampire";
+        String fnm = "Vam";
         System.out.println(fnm + ": " + fh.getSimilarFileNames(fnm));
     }
 
