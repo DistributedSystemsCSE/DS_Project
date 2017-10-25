@@ -4,6 +4,7 @@ import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -20,7 +21,8 @@ public class Neighbour extends Host{
         com = Communicator.getInstance();
     }
     
-    public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) throws BsRegisterException{
+    public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) 
+            throws BsRegisterException,IOException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         com.send(message, ip, port,-1);
@@ -32,23 +34,24 @@ public class Neighbour extends Host{
                 .decodeInitialJoinResponse(responce);
     }
     
-    public void sendJoin(String ip_sender,int port_sender){
+    public void sendJoin(String ip_sender,int port_sender) throws IOException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         com.send(message, ip, port,-1);
     }
     
-    public void sendMessage(String message){        
+    public void sendMessage(String message)throws IOException{        
         com.send(message, ip, port,-1);
     }
     
-    public void sendSearchRequest(String query,String ip_sender,int port_sender){
+    public void sendSearchRequest(String query,String ip_sender,int port_sender)
+            throws IOException{
         String message = (new Message(MessageType.SER, ip_sender,
                 port_sender, ip_sender, port_sender, query, 0)).getMessage();
         com.sendToPeer(message, ip, port);
     }
     
-    public void sendIsAlive(String ip_sender,int port_sender){
+    public void sendIsAlive(String ip_sender,int port_sender)throws IOException{
         String message= (new Message(MessageType.ISALIVE, 
                 ip_sender, port_sender)).getMessage();
         com.sendToPeer(message, ip, port);
@@ -58,7 +61,8 @@ public class Neighbour extends Host{
         this.com = com;
     }
 
-    public void sendNeighbourRequest(int size,String ip_sernder,int port_sender){
+    public void sendNeighbourRequest(int size,String ip_sernder,int port_sender)
+            throws IOException{
         
         String message = (new Message(MessageType.NEREQ, 
                                     ip_sernder, port_sender, size)).getMessage();

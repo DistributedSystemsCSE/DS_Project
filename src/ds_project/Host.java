@@ -47,7 +47,7 @@ public class Host {
 
     @Override
     public String toString() {
-        return "Host{" + "ip=" + ip + ", port=" + port + '}';
+        return "{" + "ip=" + ip + ", port=" + port + '}';
     }
 
     @Override

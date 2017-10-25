@@ -7,6 +7,7 @@ import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import helper.SearchResultTable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Node extends Host{
      
    
        
-    public boolean register(){
+    public boolean register() throws IOException{
         Neighbour[] neighbours = null;
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
@@ -164,7 +165,7 @@ public class Node extends Host{
     }
     
     private void stopReceiving(){
-        com.setShouldKill(true);
+        com.stopReceiving();
         mh.setShouldKill(true);
     }
     
@@ -256,7 +257,8 @@ public class Node extends Host{
         
     }
     
-    public boolean unregister(){
+    public boolean unregister() throws IOException{
+        stopReceiving();
         String str = (new Message(MessageType.UNREG, ip,port, name))
                 .getMessage();  
         com.sendToBS(str);

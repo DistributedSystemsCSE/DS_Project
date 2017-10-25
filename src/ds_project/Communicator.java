@@ -17,7 +17,7 @@ public class Communicator implements Runnable{
     private int serverPort;
     private int clientPort;
     private boolean shouldKill = false;
-    
+    private DatagramSocket socket = null;
     private final Configs configs;
     private final int timeout;    
     private MessageHandler messageHandler;
@@ -88,33 +88,43 @@ public class Communicator implements Runnable{
     @Override
     public void run() {
         
-        while(!shouldKill){            
-            String responce = receive(clientPort, false);
-            System.out.println("receiver: "+responce);
-            if(responce != null){                               
-                messageHandler.putMessage(responce);
-            }            
+        while(!shouldKill){ 
+            try{
+                String responce = receive(clientPort, false);
+                System.out.println("receiver: "+responce);
+                if(responce != null){                               
+                    messageHandler.putMessage(responce);
+                } 
+            }catch(IOException ex){}
+                       
         }
     }   
     
-    public void sendToPeer(String message, String peerIp, int peerPort){
+    public void stopReceiving(){
+        if(socket!=null)
+            socket.close();
+        this.shouldKill = true;
+    }
+    
+    public void sendToPeer(String message, String peerIp, int peerPort)
+            throws IOException{
         send(message,peerIp,peerPort,-1);
     }
     
-    public String receiveWithTimeout(){
+    public String receiveWithTimeout()throws IOException{
         return receive(clientPort, true);        
     }
     
-    public String receiveFromBeighbour(){
+    public String receiveFromBeighbour()throws IOException{
         return receive(clientPort, false);        
     }
     
-    public void sendToBS(String str){        
+    public void sendToBS(String str)throws IOException{        
         send(str,serverIP,serverPort,clientPort);        
     }
     
       
-    public String receiveFromBS(){
+    public String receiveFromBS()throws IOException{
        return receive(clientPort, false);
     }
     
@@ -123,8 +133,8 @@ public class Communicator implements Runnable{
      * To send available port, use port = -1
      * otherwise port has to be specifed
      */
-    public String receive(int port,boolean isTimeout){
-        DatagramSocket socket = null;
+    public String receive(int port,boolean isTimeout) throws IOException{
+        
         try{
             if(port==-1)
                 socket = new DatagramSocket();
@@ -144,12 +154,14 @@ public class Communicator implements Runnable{
         }catch(IOException ex){
             return null;
         }finally{
-            socket.close();
+            if(socket!=null)
+                socket.close();            
         }
     }
     
-    public void send(String message,String ip,int port,int send_port){
-        DatagramSocket socket = null;
+    public void send(String message,String ip,int port,int send_port)
+            throws IOException{
+        
         try{
             if(send_port==-1)
                 socket = new DatagramSocket();
@@ -166,7 +178,9 @@ public class Communicator implements Runnable{
         }catch(IOException ioe){
             ioe.printStackTrace();
 	}finally{
-            socket.close();
+            System.out.println("Send........");
+            if(socket!=null)
+                socket.close();
         }       
     }
     
