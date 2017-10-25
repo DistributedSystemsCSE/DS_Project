@@ -1,11 +1,27 @@
-## Run
-run <SERVER_IP> <SERVER_PORT> <CLIENT_IP> <CLIENT_PORT> <CLIENT_NAME>
+## Run Instruction
+In terminal/CMD  set working directory to project folder and run
 
 - Windows
 ```
-run.bat 192.xxx.x.xxx 55555 192.xxx.x.xxx 57807 buddhi
+run.bat 
 ```
 - Ubuntu
+Set permission
 ```
-run.sh 192.xxx.x.xxx 55555 192.xxx.x.xxx 57807 buddhi
+chmod +x run.sh 
 ```
+```
+./run.sh 
+```
+In the GUI set required details 
+-Boostrap Server IP, Port
+-Client IP, Port
+-Client Name
+Then click "Start"
+
+If error occurred saying "Port is already used"
+    -Insert new port number and click "Set Port"
+
+If error occurred saying "Unable to communicate with server"
+    -Check Bootstrap server state or network connection
+
