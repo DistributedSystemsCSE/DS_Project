@@ -76,8 +76,10 @@ public class FileHandler {
         fileNames.stream().forEach((filename) -> {
             List<String> fileNameWords = Arrays.asList(filename.split(" "));
             for(String checkWord:checkWords){
-                if(fileNameWords.contains(checkWord))
+                if(fileNameWords.contains(checkWord)){
                     selectedFiles.add(filename);
+                    break;
+                }
             }
         });
         return new ArrayList(selectedFiles);
@@ -96,7 +98,7 @@ public class FileHandler {
             System.out.println(name);
         });
 
-        String fnm = "Vam";
+        String fnm = "The";
         System.out.println(fnm + ": " + fh.getSimilarFileNames(fnm));
     }
 
