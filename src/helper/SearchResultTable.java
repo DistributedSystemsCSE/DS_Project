@@ -28,6 +28,9 @@ public class SearchResultTable extends Observable{
     }
     
     public HashSet<SearchResult> getResults(String keyWord){
+        if(!searchTable.containsKey(keyWord)){
+            return new HashSet<>();
+        }
         return searchTable.get(keyWord);
     }
 
