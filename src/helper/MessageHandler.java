@@ -1,6 +1,7 @@
 package helper;
 
 import ds_project.Communicator;
+import ds_project.Host;
 import ds_project.Neighbour;
 import ds_project.Node;
 import java.util.ArrayList;
@@ -23,15 +24,17 @@ public class MessageHandler implements Runnable {
     private RoutingTable routingTable = new RoutingTable();
     private Communicator communicator;
     private FileHandler fileHandler;
+    private final int maxHopCount = 10;
 
     private MessageHandler() {
-        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);        
+        message_queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
         message_list = new ArrayList<>();
     }
 
-    public void setFileHandler(FileHandler fileHandler){
+    public void setFileHandler(FileHandler fileHandler) {
         this.fileHandler = fileHandler;
     }
+
     public void setNode(Node node) {
         this.node = node;
     }
@@ -151,6 +154,7 @@ public class MessageHandler implements Runnable {
                     String fileName = mes[6];
                     List<String> searchFiles = fileHandler.getSimilarFileNames(fileName);
                     int noOfFiles = searchFiles.size();
+                    searchFiles = replaceSpace(searchFiles);
 
                     // sent search respons
                     String resMsg = (new Message(MessageType.SEROK,
@@ -165,28 +169,46 @@ public class MessageHandler implements Runnable {
                     communicator.sendToPeer(resMsg, ip, port);
 
                     // broadcast mesagge searchFile
-                    String broadcastMsg = (new Message(MessageType.SER,
-                            ip,
-                            port,
-                            node.getIp(),
-                            node.getPort(),
-                            fileName,
-                            (hops + 1),
-                            mes[8])).getMessage();
-                    node.sendToNeighboursExcept(broadcastMsg, (new Neighbour(forwardingIP, forwardingPort)));
+                    if (hops < maxHopCount) {
+                        String broadcastMsg = (new Message(MessageType.SER,
+                                ip,
+                                port,
+                                node.getIp(),
+                                node.getPort(),
+                                fileName,
+                                (hops + 1),
+                                mes[8])).getMessage();
+                        node.sendToNeighboursExcept(broadcastMsg, (new Neighbour(forwardingIP, forwardingPort)));
+                    }
                 }
                 break;
             case "SEROK":
                 //port = Integer.parseInt(mes[4]);
                 //ip = mes[3];
                 if (!addMessage(message)) {
+                    ip = mes[5];
+                    port = Integer.parseInt(mes[6]);
+                    String keyword=mes[8];
                     //show search results
                     int count = Integer.parseInt(mes[2]);
+                    List<String> fileNames=new ArrayList<>();
                     System.out.println("Search results " + mes[8]);
                     System.out.println("From " + mes[5] + mes[6]);
                     for (int i = 0; i < count; i++) {
                         System.out.println(mes[9 + i]);
+                        fileNames.add(mes[9 + i]);
                     }
+                    fileNames=replaceUnderscore(fileNames);
+                    
+                    //create search result object
+                    SearchResult searchResult=new SearchResult(
+                            new Host(ip, port),
+                            fileNames.toArray(new String[0]));
+                    
+                    node.getSearchResultTable().addToTable(
+                            keyword,
+                            searchResult);
+                    
                 }
                 break;
             case "JOIN":
@@ -274,7 +296,7 @@ public class MessageHandler implements Runnable {
                 }
                 break;
             case "ISALIVE":
-                if(!addMessage(message)){
+                if (!addMessage(message)) {
                     ip = mes[2];
                     port = Integer.parseInt(mes[3]);
                     String resMsg = (new Message(MessageType.ALIVE,
@@ -284,7 +306,7 @@ public class MessageHandler implements Runnable {
                 }
                 break;
             case "ALIVE":
-                if(!addMessage(message)){
+                if (!addMessage(message)) {
                     ip = mes[2];
                     port = Integer.parseInt(mes[3]);
                     node.setNeighbourAlive(ip, port);
@@ -380,5 +402,21 @@ public class MessageHandler implements Runnable {
         int no_nodes = Integer.parseInt(mes[2]);
         return mes[1].equals("UNROK") && mes[1].equals("0");
 
+    }
+
+    private List<String> replaceSpace(List<String> filenames) {
+        List<String> replacedFilenames = new ArrayList<>();
+        filenames.forEach((filename) -> {
+            replacedFilenames.add(filename.replace(" ", "_"));
+        });
+        return replacedFilenames;
+    }
+
+    private List<String> replaceUnderscore(List<String> filenames) {
+        List<String> replacedFilenames = new ArrayList<>();
+        filenames.forEach((filename) -> {
+            replacedFilenames.add(filename.replace("_", " "));
+        });
+        return replacedFilenames;
     }
 }
