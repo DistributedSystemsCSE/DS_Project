@@ -405,9 +405,13 @@ public class MessageHandler implements Runnable {
     public boolean decodeUnregisterResponse(String message)
             throws BsRegisterException {
         String[] mes = message.split(" ");
-        int no_nodes = Integer.parseInt(mes[2]);
-        return mes[1].equals("UNROK") && mes[1].equals("0");
-
+//        int no_nodes = Integer.parseInt(mes[2]);
+        if(mes[1].equals("UNROK") && mes[1].equals("0")){
+            return true;
+        }
+        else{
+            throw new BsRegisterException("Unregistration with BS failed");
+        }    
     }
 
     private List<String> replaceSpace(List<String> filenames) {
