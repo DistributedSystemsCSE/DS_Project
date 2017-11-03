@@ -1,6 +1,6 @@
 package helper;
 
-import ds_project.Communicator;
+import communication.Communicator;
 import ds_project.Host;
 import ds_project.Neighbour;
 import ds_project.Node;

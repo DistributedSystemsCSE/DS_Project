@@ -1,5 +1,6 @@
 package ds_project;
 
+import communication.Communicator;
 import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;

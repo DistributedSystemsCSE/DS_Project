@@ -1,4 +1,4 @@
-package ds_project;
+package communication;
 
 import configs.Configs;
 import helper.MessageHandler;

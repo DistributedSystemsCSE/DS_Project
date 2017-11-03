@@ -1,5 +1,6 @@
 package ds_project;
 
+import communication.Communicator;
 import configs.Configs;
 import helper.BsRegisterException;
 import helper.FileHandler;
@@ -94,9 +95,9 @@ public class Node extends Host{
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
         com.sendToBS(str);
-        System.out.println("sssssss");
+        
         String responce = com.receiveFromBS();
-        System.out.println("ssdsdsdsdsdsd");
+       
         if(responce==null){
             unregister();
             return false;
