@@ -115,19 +115,12 @@ public class Node extends Host{
         if(neighbours.length==0){
             //TODO
             // add neighbour search
-            Thread neighbourSetter = new Thread(new NeighbourSetter());
-            neighbourSetter.start();
-            Thread neighbourChecker = new Thread(new NeighbourChecker());
-            neighbourChecker.start();
-            startReceiving();
+            neighbourCheckingAndSetting();
             return true;
         }else if(neighbours.length==1){
             //TODO
             // add neighbour search 
-            Thread neighbourSetter = new Thread(new NeighbourSetter());
-            neighbourSetter.start();
-            Thread neighbourChecker = new Thread(new NeighbourChecker());
-            neighbourChecker.start();
+            neighbourCheckingAndSetting();
             boolean connect = false;
             try{
                 connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
@@ -150,7 +143,7 @@ public class Node extends Host{
             }	
             return true;
         }else if(neighbours.length==3){
-            System.out.println("3333");
+            //System.out.println("3333");
             startReceiving();
             int index_1 = randomGenerator.nextInt(neighbours.length);
             int index_2 = randomGenerator.nextInt(neighbours.length);
@@ -198,13 +191,16 @@ public class Node extends Host{
         if(!connected)
             return false;
         
+        neighbourCheckingAndSetting();       
+        return true;
+    }
+    
+    private void neighbourCheckingAndSetting(){
         Thread neighbourSetter = new Thread(new NeighbourSetter());
         neighbourSetter.start();
         Thread neighbourChecker = new Thread(new NeighbourChecker());
         neighbourChecker.start();
-        return true;
     }
-    
         
     public Neighbour getRandomNeighbour(){
         Neighbour neighbour = null;
