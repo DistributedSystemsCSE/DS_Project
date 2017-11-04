@@ -137,7 +137,9 @@ public class Communicator implements Runnable,RPCServer{
 
             }
         }else{
-            startRPCServer();
+            try{
+                startRPCServer();
+            }catch(IOException ex){}
         }
     }   
     
@@ -237,7 +239,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public void sendRPC(String message,String ip,int port) 
-            throws MalformedURLException{
+            throws MalformedURLException,IOException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
 //        URL url = new URL("http://localhost:9999/ws/hello?wsdl");
@@ -254,7 +256,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public String sendAndReceiveRPC(String message,String ip,int port) 
-            throws MalformedURLException{
+            throws MalformedURLException,IOException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
 //        URL url = new URL("http://localhost:9999/ws/hello?wsdl");
@@ -270,11 +272,11 @@ public class Communicator implements Runnable,RPCServer{
         return serverResponce.handleInitialJoinRequest(message);
     }
     
-    public void startRPCServer(){
+    public void startRPCServer() throws IOException{
         ep = Endpoint.create(this);
         String url_string = "http://"+CLIENT_IP+":"+CLIENT_PORT+"/ds";
         ep.publish(url_string);
-        System.out.println("sadasdas");
+        System.out.println("server started");
         //ep.stop();
     }
     
