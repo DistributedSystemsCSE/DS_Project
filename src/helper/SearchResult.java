@@ -83,8 +83,7 @@ public class SearchResult {
         }
         if(files_.length()>0)
             files_ = files_.substring(0, files_.length()-1);
-        return "neighbour=" + neighbour 
-                + ", files=" + files_;
+        return neighbour + "\n\t files=" + files_;
     }
     
       

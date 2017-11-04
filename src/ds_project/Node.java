@@ -176,8 +176,8 @@ public class Node extends Host{
     private boolean connectToTheNetwork(Neighbour nb1,Neighbour nb2){
         boolean connected = false;
         try{
-        nb1.sendJoin(ip,port);
-        nb2.sendJoin(ip,port);
+            nb1.sendJoin(ip,port);
+            nb2.sendJoin(ip,port);
         }catch(IOException ex){
             return false;
         }
