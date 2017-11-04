@@ -15,6 +15,7 @@ import java.util.Objects;
 public class Neighbour extends Host{
    
     private boolean isAlive = false;
+    //private int check
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
@@ -49,6 +50,13 @@ public class Neighbour extends Host{
             throws IOException{
         String message = (new Message(MessageType.SER, ip_sender,
                 port_sender, ip_sender, port_sender, query, 0)).getMessage();
+        com.sendToPeer(message, ip, port);
+    }
+    
+    public void sendLeaveRequest(String ip_sender,int port_sender)
+            throws IOException{
+        
+        String message = (new Message(MessageType.LEAVE, ip_sender, port_sender)).getMessage();
         com.sendToPeer(message, ip, port);
     }
     

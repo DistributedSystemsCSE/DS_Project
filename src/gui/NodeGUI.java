@@ -21,6 +21,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private final Configs configs = new Configs();
     private SearchResultTable searchResultTable;
     private String search_keyword;
+    private boolean isConnected = false;
     /**
      * Creates new form NodeGUI
      */
@@ -448,6 +449,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 btnSearch.setEnabled(true);
                 btnShowFiles.setEnabled(true);
                 btnShowNeighbours.setEnabled(true);
+                isConnected = true;
             }else{
                 JOptionPane.showMessageDialog(this,
                         "Could not register. Check the server");  
@@ -523,39 +525,65 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        try{
-            if(node!=null)
-                node.unregister();
-            
-        }catch(SocketTimeoutException ex){
-            JOptionPane.showMessageDialog(this,
-                    "Unable to communicate with server\n"
-                            + "Unregistation fail"); 
-        }catch(IOException ex){
-            JOptionPane.showMessageDialog(this,ex.getMessage());  
+        if(isConnected){
+            try{
+                if(node!=null){
+                    node.leave();
+                    node.unregister();
+                }
+                isConnected = false;
+            }catch(SocketTimeoutException ex){
+                JOptionPane.showMessageDialog(this,
+                        "Unable to communicate with server\n"
+                                + "Unregistation fail"); 
+            }catch(IOException ex){
+                JOptionPane.showMessageDialog(this,ex.getMessage());  
+            }
         }
-        
     }//GEN-LAST:event_formWindowClosing
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-        try{
-            if(node!=null)
-                node.unregister();
-        }catch(SocketTimeoutException ex){
-            JOptionPane.showMessageDialog(this,
-                    "Unable to communicate with server\n"
-                            + "Unregistation fail"); 
-        }catch(IOException ex){
-            JOptionPane.showMessageDialog(this,ex.getMessage());  
+        if(isConnected){
+            try{
+                if(node!=null){
+                    node.leave();
+                    node.unregister();
+                }
+                btnSetIP.setEnabled(true);
+                txtIP.setEditable(true);
+                btnSetPort.setEnabled(true);
+                txtPort.setEditable(true);
+                btnSetName.setEnabled(true);
+                txtName.setEditable(true);
+                btnSetServerIP.setEnabled(true);
+                txtServerIP.setEditable(true);
+                btnSetServerPort.setEnabled(true);
+                txtServerPort.setEditable(true);
+
+                btnSearch.setEnabled(false);
+                btnShowFiles.setEnabled(false);
+                btnShowNeighbours.setEnabled(false);
+                isConnected = false;
+            }catch(SocketTimeoutException ex){
+                JOptionPane.showMessageDialog(this,
+                        "Unable to communicate with server\n"
+                                + "Unregistation fail"); 
+            }catch(IOException ex){
+                JOptionPane.showMessageDialog(this,ex.getMessage());  
+            }
         }
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        try{
-            if(node!=null)
-                node.unregister();
-        }catch(IOException ex){
-            JOptionPane.showMessageDialog(this,ex.getMessage());  
+        if(isConnected){
+            try{
+                if(node!=null){
+                    node.leave();
+                    node.unregister();
+                }
+            }catch(IOException ex){
+                JOptionPane.showMessageDialog(this,ex.getMessage());  
+            }
         }
     }//GEN-LAST:event_formWindowClosed
 

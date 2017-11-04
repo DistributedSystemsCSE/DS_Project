@@ -299,6 +299,8 @@ public class Node extends Host{
     public boolean addNeighbours(Neighbour neb){
         if(neb.ip.equals(ip)&&neb.port==port)
             return false;
+        if(neighbours_list.size()>=max_number_of_neighbours)
+            return false;
         if (!neighbours_list.stream().noneMatch((tem) -> (tem.equals(neb)))) {
             return false;
         }
@@ -321,6 +323,16 @@ public class Node extends Host{
             neighbours_list.stream().forEach((neighbour_) -> {
                 try{
                     neighbour_.sendSearchRequest(query,ip,port); 
+                }catch(IOException ex){}
+           });
+        }
+    }
+    
+    public void leave(){        
+        synchronized(neighbours_list){            
+            neighbours_list.stream().forEach((neighbour_) -> {
+                try{
+                    neighbour_.sendLeaveRequest(ip,port); 
                 }catch(IOException ex){}
            });
         }
