@@ -117,8 +117,8 @@ public class Node extends Host{
             // add neighbour search
             Thread neighbourSetter = new Thread(new NeighbourSetter());
             neighbourSetter.start();
-//            Thread neighbourChecker = new Thread(new NeighbourChecker());
-//            neighbourChecker.start();
+            Thread neighbourChecker = new Thread(new NeighbourChecker());
+            neighbourChecker.start();
             startReceiving();
             return true;
         }else if(neighbours.length==1){
@@ -126,8 +126,8 @@ public class Node extends Host{
             // add neighbour search 
             Thread neighbourSetter = new Thread(new NeighbourSetter());
             neighbourSetter.start();
-//            Thread neighbourChecker = new Thread(new NeighbourChecker());
-//            neighbourChecker.start();
+            Thread neighbourChecker = new Thread(new NeighbourChecker());
+            neighbourChecker.start();
             boolean connect = false;
             try{
                 connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
@@ -200,8 +200,8 @@ public class Node extends Host{
         
         Thread neighbourSetter = new Thread(new NeighbourSetter());
         neighbourSetter.start();
-//        Thread neighbourChecker = new Thread(new NeighbourChecker());
-//        neighbourChecker.start();
+        Thread neighbourChecker = new Thread(new NeighbourChecker());
+        neighbourChecker.start();
         return true;
     }
     
@@ -249,6 +249,13 @@ public class Node extends Host{
         neighbours_list.stream().forEach((nb_)->{
             if(nb_.ip.equals(ip)&&nb_.port==port)
                 nb_.setAlive(true);
+        });
+    }
+    
+    public void incrementNeighbourAlive(String ip,int port){
+        neighbours_list.stream().forEach((nb_)->{
+            if(nb_.ip.equals(ip)&&nb_.port==port)
+                nb_.incrementChecked_alive_count();
         });
     }
     public void showNeighbours(){
