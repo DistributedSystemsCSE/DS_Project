@@ -226,27 +226,36 @@ public class MessageHandler implements Runnable {
 //                        if (node.addNeighbours(new Neighbour(ip, port))) {
 //                            routingTable.updateTable(ip, port, ip, port, 1);
 //                        }
-                    node.addNeighbours(new Neighbour(ip, port));
+                    if (node.addNeighbours(new Neighbour(ip, port))) {
 
-                    String resMsg = (new Message(MessageType.JOINOK,
-                            0,
-                            node.getIp(),
-                            node.getPort())).getMessage();
-                    System.out.println("res:" + resMsg);
-                    sendMessage(resMsg, ip, port);
+                        String resMsg = (new Message(MessageType.JOINOK,
+                                0,
+                                node.getIp(),
+                                node.getPort())).getMessage();
+                        System.out.println("res:" + resMsg);
+                        sendMessage(resMsg, ip, port);
+                    } else {
+                        String resMsg = (new Message(MessageType.JOINOK,
+                                9999,
+                                node.getIp(),
+                                node.getPort())).getMessage();
+                        System.out.println("res:" + resMsg);
+                        sendMessage(resMsg, ip, port);
+                    }
+
                 }
                 break;
             case "JOINOK":
                 if (!addMessage(message)) {
                     ip = mes[3];
                     port = Integer.parseInt(mes[4]);
-                    System.out.println("New JoinOK message");
-//                    if (!addMessage(message)) {
-//                        if (node.addNeighbours(new Neighbour(ip, port))) {
-//                            routingTable.updateTable(ip, port, ip, port, 1);
-//                        }
-//                    }
-                    node.addNeighbours(new Neighbour(ip, port));
+                    int value = Integer.parseInt(mes[2]);
+                    if (value == 0) {
+                        System.out.println("New JoinOK message");
+                        node.addNeighbours(new Neighbour(ip, port));
+                    } else {
+                        System.out.println("New Failed JoinOK message");
+                    }
                 }
                 break;
             case "NEREQ":
