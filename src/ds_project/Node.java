@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
  */
 public class Node extends Host{
     
-    private String name;
+    private String CLIENT_NAME;
     private final Configs configs;
-    private int timeout;
-    private int max_number_of_neighbours;
+    private int TIME_OUT_FOR_FIRST_TWO;
+    private int MAX_NUMBER_OF_NEIGHBORS;
     private final Random randomGenerator;
     private Communicator com = null;
     private MessageHandler mh = null;
@@ -55,9 +55,9 @@ public class Node extends Host{
     public void configureVariables(){
         super.setIp(configs.getClientIP());
         super.setPort(configs.getClientPort());
-        name = configs.getClientName();        
-        timeout = configs.getTimeoutForFirstTwo();
-        max_number_of_neighbours = configs.getMaxNumberOfNeighbours();
+        CLIENT_NAME = configs.getClientName();        
+        TIME_OUT_FOR_FIRST_TWO = configs.getTimeoutForFirstTwo();
+        MAX_NUMBER_OF_NEIGHBORS = configs.getMaxNumberOfNeighbours();
         com.configureVariables();
     }
 
@@ -77,7 +77,7 @@ public class Node extends Host{
      * @param name the name to set
      */
     public void setName(String name) {
-        this.name = name;
+        this.CLIENT_NAME = name;
     }
     
     private static class InstanceHolder{
@@ -92,7 +92,7 @@ public class Node extends Host{
        
     public boolean register() throws IOException{
         Neighbour[] neighbours;
-        String str = (new Message(MessageType.REG, ip,port, name))
+        String str = (new Message(MessageType.REG, ip,port, CLIENT_NAME))
                 .getMessage();  
         com.sendToBS(str);
         
@@ -189,7 +189,7 @@ public class Node extends Host{
             return false;
         }
         long startTime = System.currentTimeMillis(); 
-        while(false||(System.currentTimeMillis()-startTime)<timeout){
+        while(false||(System.currentTimeMillis()-startTime)<TIME_OUT_FOR_FIRST_TWO){
             if(neighbours_list.size()>0){
                 connected = true;
                 break;
@@ -276,7 +276,7 @@ public class Node extends Host{
     
     public boolean unregister() throws IOException{
         stopReceiving();
-        String str = (new Message(MessageType.UNREG, ip,port, name))
+        String str = (new Message(MessageType.UNREG, ip,port, CLIENT_NAME))
                 .getMessage();  
         com.sendToBS(str);
         String responce = com.receiveFromBS();
@@ -299,7 +299,7 @@ public class Node extends Host{
     public boolean addNeighbours(Neighbour neb){
         if(neb.ip.equals(ip)&&neb.port==port)
             return false;
-        if(neighbours_list.size()>=max_number_of_neighbours)
+        if(neighbours_list.size()>=MAX_NUMBER_OF_NEIGHBORS)
             return false;
         if (!neighbours_list.stream().noneMatch((tem) -> (tem.equals(neb)))) {
             return false;
@@ -340,10 +340,10 @@ public class Node extends Host{
     
     private class NeighbourSetter implements Runnable{
 
-        private final int timeout_neighbour;
+        private final int TIME_OUT_NEIGHBOUR_SETTER;
         
         public NeighbourSetter(){
-            timeout_neighbour = configs.getNeighbourSetterTimeout();
+            TIME_OUT_NEIGHBOUR_SETTER = configs.getNeighbourSetterTimeout();
         }
         
         @Override
@@ -353,11 +353,11 @@ public class Node extends Host{
                 int neighbours_size;
                 synchronized(neighbours_list){
                     neighbours_size = neighbours_list.size();
-                    size = max_number_of_neighbours - neighbours_size;
+                    size = MAX_NUMBER_OF_NEIGHBORS - neighbours_size;
                 }
                 if(size<=0||neighbours_size==0){
                     try {
-                        Thread.sleep(timeout_neighbour);
+                        Thread.sleep(TIME_OUT_NEIGHBOUR_SETTER);
                         continue;
                     } catch (InterruptedException ex) {
                         
@@ -371,7 +371,7 @@ public class Node extends Host{
                     });
                 }
                 try {
-                    Thread.sleep(timeout_neighbour);                    
+                    Thread.sleep(TIME_OUT_NEIGHBOUR_SETTER);                    
                 } catch (InterruptedException ex) {
                     
                 }
@@ -382,17 +382,19 @@ public class Node extends Host{
     
     private class NeighbourChecker implements Runnable{
 
-        private final int timeout_neighbour_checker;
+        private final int TIME_OUT_NEIGHBOUR_CHECKER;
+        private final int MAX_CKECKED_ALIVE_COUNT;
         
         public NeighbourChecker(){
-            timeout_neighbour_checker = configs.getNeighbourSetterTimeout();
+            TIME_OUT_NEIGHBOUR_CHECKER = configs.getNeighbourSetterTimeout();
+            MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCount();
         } 
         
         @Override
         public void run() {
             synchronized(neighbours_list){
                 neighbours_list.stream().forEach((neighbour) -> {
-                    neighbour.setAlive(false);
+                    neighbour.incrementChecked_alive_count();
                     try{
                         neighbour.sendIsAlive(ip,port);
                     }catch(IOException ex){
@@ -401,14 +403,15 @@ public class Node extends Host{
             }
             
             try {
-                Thread.sleep(timeout_neighbour_checker);
+                Thread.sleep(TIME_OUT_NEIGHBOUR_CHECKER);
             } catch (InterruptedException ex) {
 
             }
             
             synchronized(neighbours_list){
                 neighbours_list.stream().forEach((neighbour) -> {
-                    if(!neighbour.isAlive()){
+                    if(neighbour.getChecked_alive_count()
+                            >MAX_CKECKED_ALIVE_COUNT){
                         neighbours_list.remove(neighbour);
                     }
                 });

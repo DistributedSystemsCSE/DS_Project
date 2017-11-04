@@ -53,7 +53,11 @@ public class Configs {
         return getIntegerProperty("MAX_NUMBER_OF_NEIGHBORS");        
     }
     
-     public boolean isUDP(){        
+    public int getMaxAliveCount(){
+        return getIntegerProperty("MAX_CKECKED_ALIVE_COUNT");        
+    }
+    
+    public boolean isUDP(){        
         return getStringProperty("IS_UDP").equals("true");        
     }
     

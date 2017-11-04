@@ -19,16 +19,16 @@ import javax.xml.ws.Service;
  */
 @WebService(endpointInterface = "communication.RPCServer")
 public class Communicator implements Runnable,RPCServer{
-    private String serverIP;
-    private String clientIP;
-    private int serverPort;
-    private int clientPort;
+    private String SERVER_IP;
+    private String CLIENT_IP;
+    private int SERVER_PORT;
+    private int CLIENT_PORT;
     private boolean shouldKill = false;
     private DatagramSocket socket_re = null;
     private Endpoint ep = null;
-    private boolean isUDP = true;
+    private boolean IS_UDP = true;
     private final Configs configs;
-    private int timeout;    
+    private int TIME_OUT_RECEIVE;    
     private MessageHandler messageHandler;
     
     private Communicator(){
@@ -37,12 +37,12 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public void configureVariables(){
-        timeout = configs.getReceiverTimeout();
-        serverIP = configs.getServerIP();
-        clientIP = configs.getClientIP();
-        clientPort = configs.getClientPort();        
-        serverPort = configs.getServerPort(); 
-        isUDP = configs.isUDP();
+        TIME_OUT_RECEIVE = configs.getReceiverTimeout();
+        SERVER_IP = configs.getServerIP();
+        CLIENT_IP = configs.getClientIP();
+        CLIENT_PORT = configs.getClientPort();        
+        SERVER_PORT = configs.getServerPort(); 
+        IS_UDP = configs.isUDP();
     }
     
     public void setMessageHandler(MessageHandler messageHandler){
@@ -67,28 +67,28 @@ public class Communicator implements Runnable,RPCServer{
      * @param serverIP the serverIP to set
      */
     public void setServerIP(String serverIP) {
-        this.serverIP = serverIP;
+        this.SERVER_IP = serverIP;
     }
 
     /**
      * @param clientIP the clientIP to set
      */
     public void setClientIP(String clientIP) {
-        this.clientIP = clientIP;
+        this.CLIENT_IP = clientIP;
     }
 
     /**
      * @param serverPort the serverPort to set
      */
     public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
+        this.SERVER_PORT = serverPort;
     }
 
     /**
      * @param clientPort the clientPort to set
      */
     public void setClientPort(int clientPort) {
-        this.clientPort = clientPort;
+        this.CLIENT_PORT = clientPort;
     }
 
     /**
@@ -125,10 +125,10 @@ public class Communicator implements Runnable,RPCServer{
     @Override
     public void run() {
         
-        if(isUDP){
+        if(IS_UDP){
             while(!shouldKill){ 
                 try{
-                    String responce = receive(clientPort, false);
+                    String responce = receive(CLIENT_PORT, false);
                     System.out.println("udp_receiver: "+responce);
                     if(responce != null){                               
                         messageHandler.putMessage(responce);
@@ -142,7 +142,7 @@ public class Communicator implements Runnable,RPCServer{
     }   
     
     public void stopReceiving(){
-        if(isUDP){
+        if(IS_UDP){
             if(socket_re!=null)
                 socket_re.close();
             this.shouldKill = true;
@@ -154,7 +154,7 @@ public class Communicator implements Runnable,RPCServer{
     
     public void sendToPeer(String message, String peerIp, int peerPort)
             throws IOException{
-        if(isUDP)
+        if(IS_UDP)
             send(message,peerIp,peerPort,-1);
         else
             sendRPC(message, peerIp, peerPort);
@@ -163,7 +163,7 @@ public class Communicator implements Runnable,RPCServer{
     public String sendInitalJoin(String message, String peerIp, int peerPort)
             throws IOException{
         String responce;
-        if(isUDP){
+        if(IS_UDP){
             send(message,peerIp,peerPort,-1);
             responce = receiveWithTimeout();
             return responce;
@@ -174,7 +174,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public String receiveWithTimeout()throws IOException{
-        return receive(clientPort, true);        
+        return receive(CLIENT_PORT, true);        
     }
 //    
 //    public String receiveFromNeighbour()throws IOException{
@@ -182,12 +182,12 @@ public class Communicator implements Runnable,RPCServer{
 //    }
     
     public void sendToBS(String str)throws IOException{        
-        send(str,serverIP,serverPort,clientPort);        
+        send(str,SERVER_IP,SERVER_PORT,CLIENT_PORT);        
     }
     
       
     public String receiveFromBS()throws IOException{
-       return receive(clientPort, true);
+       return receive(CLIENT_PORT, true);
     }
     
     
@@ -204,7 +204,7 @@ public class Communicator implements Runnable,RPCServer{
             socket_re = new DatagramSocket(port); 
 
         if(isTimeout)
-            socket_re.setSoTimeout(timeout);
+            socket_re.setSoTimeout(TIME_OUT_RECEIVE);
 
         byte[] buf = new byte[65536];  
         DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
@@ -272,7 +272,7 @@ public class Communicator implements Runnable,RPCServer{
     
     public void startRPCServer(){
         ep = Endpoint.create(this);
-        String url_string = "http://"+clientIP+":"+clientPort+"/ds";
+        String url_string = "http://"+CLIENT_IP+":"+CLIENT_PORT+"/ds";
         ep.publish(url_string);
         System.out.println("sadasdas");
         //ep.stop();

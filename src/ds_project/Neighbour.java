@@ -1,6 +1,7 @@
 package ds_project;
 
 import communication.Communicator;
+import configs.Configs;
 import helper.BsRegisterException;
 import helper.Message;
 import helper.MessageType;
@@ -15,12 +16,14 @@ import java.util.Objects;
 public class Neighbour extends Host{
    
     private boolean isAlive = false;
-    //private int check
+    private int checked_alive_count = 0;
+    private int MAX_CKECKED_ALIVE_COUNT;
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
         super(ip,port); 
-        com = Communicator.getInstance();
+        com = Communicator.getInstance();        
+        MAX_CKECKED_ALIVE_COUNT = (new Configs()).getMaxAliveCount();
     }
     
     public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) 
@@ -91,6 +94,21 @@ public class Neighbour extends Host{
      */
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
+    }
+
+    /**
+     * @return the checked_alive_count
+     */
+    public int getChecked_alive_count() {
+        return checked_alive_count;
+    }
+
+    public void incrementChecked_alive_count() {
+        this.checked_alive_count++;
+    }
+    
+    public void setChecked_alive_countZero() {
+        this.checked_alive_count = 0;
     }
     
     
