@@ -91,7 +91,7 @@ public class Node extends Host{
    
        
     public boolean register() throws IOException{
-        Neighbour[] neighbours = null;
+        Neighbour[] neighbours;
         String str = (new Message(MessageType.REG, ip,port, name))
                 .getMessage();  
         com.sendToBS(str);

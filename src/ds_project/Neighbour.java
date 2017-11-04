@@ -26,8 +26,8 @@ public class Neighbour extends Host{
             throws BsRegisterException,IOException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
-        com.sendToPeer(message, ip, port);
-        String responce = com.receiveWithTimeout();
+        //com.sendToPeer(message, ip, port);
+        String responce = com.sendInitalJoin(message, ip, port);
         System.out.println("A: "+responce);
         if(responce==null)
             return false;

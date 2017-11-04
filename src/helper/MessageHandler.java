@@ -153,24 +153,24 @@ public class MessageHandler implements Runnable {
                     // check for files and send responce
                     String fileName = mes[6];
                     //Replcae "_" with " "
-                    fileName=fileName.replace("_", " ");
+                    fileName = fileName.replace("_", " ");
                     List<String> searchFiles = fileHandler.getSimilarFileNames(fileName);
                     int noOfFiles = searchFiles.size();
                     searchFiles = replaceSpace(searchFiles);
-                    fileName=fileName.replace(" ", "_");
+                    fileName = fileName.replace(" ", "_");
 
                     // sent search respons
-                    if(noOfFiles>0){
-                    String resMsg = (new Message(MessageType.SEROK,
-                            noOfFiles,
-                            ip,
-                            port,
-                            node.getIp(),
-                            node.getPort(),
-                            (hops + 1),
-                            fileName,
-                            searchFiles)).getMessage();
-                    sendMessage(resMsg, ip, port);
+                    if (noOfFiles > 0) {
+                        String resMsg = (new Message(MessageType.SEROK,
+                                noOfFiles,
+                                ip,
+                                port,
+                                node.getIp(),
+                                node.getPort(),
+                                (hops + 1),
+                                fileName,
+                                searchFiles)).getMessage();
+                        sendMessage(resMsg, ip, port);
                     }
 
                     // broadcast mesagge searchFile
@@ -407,12 +407,29 @@ public class MessageHandler implements Runnable {
             throws BsRegisterException {
         String[] mes = message.split(" ");
 //        int no_nodes = Integer.parseInt(mes[2]);
-        if(mes[1].equals("UNROK") && mes[2].equals("0")){
+        if (mes[1].equals("UNROK") && mes[2].equals("0")) {
             return true;
-        }
-        else{
+        } else {
             throw new BsRegisterException("Unregistration with BS failed");
-        }    
+        }
+    }
+
+    //Handel initial join request to distributed system
+    public String handelInitialJoinToDS(String message) {
+        String[] mes = message.split(" ");
+        if (mes[1].equals("JOIN") && !addMessage(message)) {
+            String ip = mes[2];
+            int port = Integer.parseInt(mes[3]);
+            System.out.println("Initial JOIN message");
+            node.addNeighbours(new Neighbour(ip, port));
+            String resMsg = (new Message(MessageType.JOINOK,
+                    0,
+                    node.getIp(),
+                    node.getPort())).getMessage();
+            System.out.println("res:" + resMsg);
+            return resMsg;
+        }
+        return null;
     }
 
     private List<String> replaceSpace(List<String> filenames) {
@@ -430,12 +447,12 @@ public class MessageHandler implements Runnable {
         });
         return replacedFilenames;
     }
-    
-    private void sendMessage(String message, String ip, int port){
+
+    private void sendMessage(String message, String ip, int port) {
         try {
             communicator.sendToPeer(message, ip, port);
         } catch (Exception e) {
-            System.out.println("Exception while sending (MH): "+e.toString());
+            System.out.println("Exception while sending (MH): " + e.toString());
         }
     }
 }
