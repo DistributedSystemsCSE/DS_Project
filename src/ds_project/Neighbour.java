@@ -31,6 +31,7 @@ public class Neighbour extends Host{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         //com.sendToPeer(message, ip, port);
+        System.out.println(ip+" "+port);
         String responce = com.sendInitalJoin(message, ip, port);
         System.out.println("A: "+responce);
         if(responce==null)

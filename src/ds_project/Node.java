@@ -87,9 +87,7 @@ public class Node extends Host{
     public static Node getInstance(){
         return InstanceHolder.instance;
     }
-     
-   
-       
+          
     public boolean register() throws IOException{
         Neighbour[] neighbours;
         String str = (new Message(MessageType.REG, ip,port, CLIENT_NAME))
@@ -115,6 +113,7 @@ public class Node extends Host{
         if(neighbours.length==0){
             //TODO
             // add neighbour search
+            startReceiving();
             neighbourCheckingAndSetting();
             return true;
         }else if(neighbours.length==1){
