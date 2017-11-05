@@ -326,7 +326,7 @@ public class MessageHandler implements Runnable {
                     ip = mes[2];
                     port = Integer.parseInt(mes[3]);
                     //node.setNeighbourAlive(ip, port);
-                    node.incrementNeighbourAlive(ip, port);
+                    node.setNeighbourAliveCount(ip, port);
                 }
                 break;
 

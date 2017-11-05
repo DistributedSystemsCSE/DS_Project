@@ -2,6 +2,7 @@ package communication;
 
 import configs.Configs;
 import helper.MessageHandler;
+import helper.TCPException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -12,6 +13,7 @@ import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 /**
  *
@@ -155,7 +157,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public void sendToPeer(String message, String peerIp, int peerPort)
-            throws IOException{
+            throws IOException, TCPException{
         if(IS_UDP)
             send(message,peerIp,peerPort,-1);
         else
@@ -163,7 +165,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public String sendInitalJoin(String message, String peerIp, int peerPort)
-            throws IOException{
+            throws IOException, TCPException{
         String responce;
         if(IS_UDP){
             send(message,peerIp,peerPort,-1);
@@ -239,7 +241,7 @@ public class Communicator implements Runnable,RPCServer{
     }
     
     public void sendRPC(String message,String ip,int port) 
-            throws MalformedURLException,IOException{
+            throws IOException,TCPException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
 //        URL url = new URL("http://localhost:9999/ws/hello?wsdl");
@@ -249,14 +251,19 @@ public class Communicator implements Runnable,RPCServer{
 	//2nd argument is service name, refer to wsdl document above
         QName qname = new QName("http://communication/",
                 "CommunicatorService");
-
-        Service service = Service.create(url, qname);            
-        RPCServer serverResponce = service.getPort(RPCServer.class);            
-        serverResponce.handleRequest(message);
+        
+        try{
+            Service service = Service.create(url, qname);            
+            RPCServer serverResponce = service.getPort(RPCServer.class);  
+            serverResponce.handleRequest(message);
+        }catch(RuntimeException ex){
+            throw new TCPException(ex.getMessage());
+        }
+        
     }
     
     public String sendAndReceiveRPC(String message,String ip,int port) 
-            throws MalformedURLException,IOException{
+            throws IOException,TCPException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
 //        URL url = new URL("http://localhost:9999/ws/hello?wsdl");
@@ -267,12 +274,16 @@ public class Communicator implements Runnable,RPCServer{
         QName qname = new QName("http://communication/",
                 "CommunicatorService");
 
-        Service service = Service.create(url, qname);            
-        RPCServer serverResponce = service.getPort(RPCServer.class);            
-        return serverResponce.handleInitialJoinRequest(message);
+        try{
+            Service service = Service.create(url, qname);            
+            RPCServer serverResponce = service.getPort(RPCServer.class);            
+            return serverResponce.handleInitialJoinRequest(message);
+        }catch(RuntimeException ex){
+            throw new TCPException(ex.getMessage());
+        }
     }
     
-    public void startRPCServer() throws IOException{
+    public void startRPCServer() throws IOException,RuntimeException{
         ep = Endpoint.create(this);
         String url_string = "http://"+CLIENT_IP+":"+CLIENT_PORT+"/ds";
         ep.publish(url_string);
