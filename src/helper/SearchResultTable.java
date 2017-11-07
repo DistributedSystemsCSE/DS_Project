@@ -3,6 +3,7 @@ package helper;
 import ds_project.Host;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Observable;
 
 
@@ -36,7 +37,13 @@ public class SearchResultTable extends Observable{
     }
 
     public void removeLeavedPeerResults(Host host){
-        searchTable.values().remove(host);
+        for(String key:searchTable.keySet()){
+           HashSet<SearchResult> set = searchTable.get(key);
+            if(set.contains(host)){
+                set.remove(host);
+                searchTable.put(key, set);
+            }
+        }
     }
     
     public String getUpdatedKeyword(){
