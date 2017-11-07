@@ -52,8 +52,7 @@ public class SearchResult {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.neighbour);
-        hash = 59 * hash + Arrays.deepHashCode(this.files);
+        hash = 47 * hash + Objects.hashCode(this.neighbour);
         return hash;
     }
 
@@ -69,11 +68,10 @@ public class SearchResult {
         if (!Objects.equals(this.neighbour, other.neighbour)) {
             return false;
         }
-        if (!Arrays.deepEquals(this.files, other.files)) {
-            return false;
-        }
         return true;
     }
+
+    
 
     @Override
     public String toString() {
