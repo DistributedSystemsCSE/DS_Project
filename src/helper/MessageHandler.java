@@ -5,7 +5,6 @@ import ds_project.Host;
 import ds_project.Neighbour;
 import ds_project.Node;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -309,6 +308,8 @@ public class MessageHandler implements Runnable {
                     ip = mes[2];
                     port = Integer.parseInt(mes[3]);
                     node.removeNeighbour(new Neighbour(ip, port));
+                    node.getSearchResultTable()
+                            .removeLeavedPeerResults(new Host(ip,port));
                 }
                 break;
             case "ISALIVE":

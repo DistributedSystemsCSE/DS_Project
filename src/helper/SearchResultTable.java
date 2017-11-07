@@ -1,5 +1,6 @@
 package helper;
 
+import ds_project.Host;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Observable;
@@ -34,6 +35,10 @@ public class SearchResultTable extends Observable{
         return searchTable.get(keyWord);
     }
 
+    public void removeLeavedPeerResults(Host host){
+        searchTable.values().remove(host);
+    }
+    
     public String getUpdatedKeyword(){
         return search_keyword;
     }
