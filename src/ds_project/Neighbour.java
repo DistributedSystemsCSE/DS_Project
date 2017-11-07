@@ -1,16 +1,13 @@
 package ds_project;
 
 import communication.Communicator;
-import configs.Configs;
 import helper.BsRegisterException;
-import helper.InitialNodeConnectionException;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import helper.TCPException;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.Objects;
+
 
 /**
  *
@@ -19,14 +16,13 @@ import java.util.Objects;
 public class Neighbour extends Host{
    
     private boolean isAlive = false;
-    private int checked_alive_count = 0;
-    private int MAX_CKECKED_ALIVE_COUNT;
+    private int checked_alive_count = 0;   
     private Communicator com = null;
 
     public Neighbour(String ip, int port) {
         super(ip,port); 
-        com = Communicator.getInstance();        
-        MAX_CKECKED_ALIVE_COUNT = (new Configs()).getMaxAliveCount();
+        com = Communicator.getInstance();       
+        
     }
     
     public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) 

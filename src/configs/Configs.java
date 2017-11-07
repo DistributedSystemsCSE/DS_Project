@@ -53,8 +53,12 @@ public class Configs {
         return getIntegerProperty("MAX_NUMBER_OF_NEIGHBORS");        
     }
     
-    public int getMaxAliveCount(){
-        return getIntegerProperty("MAX_CKECKED_ALIVE_COUNT");        
+    public int getMaxAliveCountTCP(){
+        return getIntegerProperty("MAX_CKECKED_ALIVE_COUNT_TCP");        
+    }
+    
+    public int getMaxAliveCountUDP(){
+        return getIntegerProperty("MAX_CKECKED_ALIVE_COUNT_UDP");        
     }
     
     public boolean isUDP(){        

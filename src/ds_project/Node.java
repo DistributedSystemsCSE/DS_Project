@@ -195,8 +195,10 @@ public class Node extends Host{
     private void neighbourCheckingAndSetting(){
         Thread neighbourSetter = new Thread(new NeighbourSetter());
         neighbourSetter.start();
-//        Thread neighbourChecker = new Thread(new NeighbourChecker());
-//        neighbourChecker.start();
+        if(configs.isUDP()){
+            Thread neighbourChecker = new Thread(new NeighbourChecker());
+            neighbourChecker.start();
+        }
     }
         
     public Neighbour getRandomNeighbour(){
@@ -351,8 +353,12 @@ public class Node extends Host{
         
         public NeighbourSetter(){
             TIME_OUT_NEIGHBOUR_SETTER = configs.getNeighbourSetterTimeout();
-            MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCount();
-        }
+            
+            if(configs.isUDP())
+                MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCountUDP();
+            else
+                MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCountTCP();
+        }   
         
         @Override
         public void run() {
@@ -402,42 +408,31 @@ public class Node extends Host{
     
     private class NeighbourChecker implements Runnable{
 
-        private final int TIME_OUT_NEIGHBOUR_CHECKER;
-        private final int MAX_CKECKED_ALIVE_COUNT;
+        private final int TIME_OUT_NEIGHBOUR_CHECKER;        
         
         public NeighbourChecker(){
-            TIME_OUT_NEIGHBOUR_CHECKER = configs.getNeighbourSetterTimeout();
-            MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCount();
+            TIME_OUT_NEIGHBOUR_CHECKER = configs.getNeighbourSetterTimeout();            
         } 
         
         @Override
         public void run() {
-            synchronized(neighbours_list){
-                neighbours_list.stream().forEach((neighbour) -> {
-                    neighbour.incrementChecked_alive_count();
-                    try{
-                        neighbour.sendIsAlive(ip,port);
-                    }catch(IOException|TCPException ex){
-                    }
-                });
-            }
-            
-            try {
-                Thread.sleep(TIME_OUT_NEIGHBOUR_CHECKER);
-            } catch (InterruptedException ex) {
+            while(true){
+                synchronized(neighbours_list){
+                    neighbours_list.stream().forEach((neighbour) -> {
+                        neighbour.incrementChecked_alive_count();
+                        try{
+                            neighbour.sendIsAlive(ip,port);
+                        }catch(IOException|TCPException ex){
+                        }
+                    });
+                }
 
+                try {
+                    Thread.sleep(TIME_OUT_NEIGHBOUR_CHECKER);
+                } catch (InterruptedException ex) {
+
+                }   
             }
-            
-            synchronized(neighbours_list){
-                neighbours_list.stream().forEach((neighbour) -> {
-                    System.out.println("checking " + neighbour.getChecked_alive_count());
-                    //System.out.println("checking");
-                    if(neighbour.getChecked_alive_count()
-                            >MAX_CKECKED_ALIVE_COUNT){
-                        neighbours_list.remove(neighbour);
-                    }
-                });
-            }        
         }
     
     }
