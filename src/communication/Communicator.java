@@ -200,8 +200,9 @@ public class Communicator implements Runnable,RPCServer{
      * otherwise port has to be specifed
      */
     private String receive(int port,boolean isTimeout) throws IOException{
-        
-        socket_re = null;        
+        String str = null;
+        socket_re = null;  
+        try{
         if(port==-1)
             socket_re = new DatagramSocket();
         else
@@ -213,30 +214,41 @@ public class Communicator implements Runnable,RPCServer{
         byte[] buf = new byte[65536];  
         DatagramPacket incoming = new DatagramPacket(buf, buf.length);  
         socket_re.receive(incoming);  
-        String str = new String(incoming.getData(), 0, 
+        str = new String(incoming.getData(), 0, 
                 incoming.getLength()); 
-        socket_re.close();
+        }catch(IOException ex){
+            throw ex;
+        }finally{
+            if(socket_re!=null)
+                socket_re.close();            
+        }
         return str;
 
     }
     
     private void send(String message,String ip,int port,int send_port)
             throws IOException{
-        
+                
         DatagramSocket socket = null;
+        try{     
+            if(send_port==-1)
+                socket = new DatagramSocket();
+            else
+                socket = new DatagramSocket(send_port);
 
-        if(send_port==-1)
-            socket = new DatagramSocket();
-        else
-            socket = new DatagramSocket(send_port);
+            InetAddress IPAddress = InetAddress.getByName(ip);            
+            byte[] toSend  = message.getBytes(); 		  
+            DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
+                    IPAddress, port); 
 
-        InetAddress IPAddress = InetAddress.getByName(ip);            
-        byte[] toSend  = message.getBytes(); 		  
-        DatagramPacket packet =new DatagramPacket(toSend, toSend.length, 
-                IPAddress, port); 
-
-        socket.send(packet);
-        socket.close();                       
+            socket.send(packet);
+        }catch(IOException ex){
+            throw ex;
+        }finally{
+            if(socket!=null)
+                socket.close();
+        }
+                               
              
     }
     

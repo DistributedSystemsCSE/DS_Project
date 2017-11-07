@@ -32,7 +32,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         initComponents();
         buttonGroup1.add(rbtnRPC);
         buttonGroup1.add(rbtnUDP);
-        btnStop.setEnabled(false);
+        
         init();
     }
     
@@ -71,7 +71,6 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         btnSetIP = new javax.swing.JButton();
         txtName = new javax.swing.JTextField();
         btnSetName = new javax.swing.JButton();
-        btnStop = new javax.swing.JButton();
         txtServerPort = new javax.swing.JTextField();
         btnSetServerPort = new javax.swing.JButton();
         txtServerIP = new javax.swing.JTextField();
@@ -169,7 +168,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 .addContainerGap()
                 .addComponent(btnShowFiles)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
 
@@ -236,13 +235,6 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             }
         });
 
-        btnStop.setText("Stop");
-        btnStop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStopActionPerformed(evt);
-            }
-        });
-
         txtServerPort.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtServerPortMouseClicked(evt);
@@ -287,10 +279,6 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,7 +300,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                                 .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnSetPort, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -339,9 +328,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSetName))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                    .addComponent(btnStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -477,12 +464,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         searchResultTable.addObserver(this);
         try{
             
-            if(node.register()){
-                setStartedContions();
-            }else{
-                JOptionPane.showMessageDialog(this,
-                        "Could not register. Check the server");  
-            }
+            node.register();
+            setStartedContions();            
              
         }catch(InitialNodeConnectionException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage());           
@@ -576,26 +559,6 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         }
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-        if(isConnected){
-            try{
-                if(node!=null){
-                    node.leave();
-                    node.unregister();
-                }
-                goToStartConditions();
-            }catch(SocketTimeoutException ex){
-                JOptionPane.showMessageDialog(this,
-                        "Unable to communicate with server\n"
-                                + "Unregistation fail"); 
-                goToStartConditions();
-            }catch(IOException ex){
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this,ex.getMessage());  
-            }
-        }
-    }//GEN-LAST:event_btnStopActionPerformed
-
     private void goToStartConditions(){
         btnSetIP.setEnabled(true);
         txtIP.setEditable(true);
@@ -611,7 +574,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         rbtnRPC.setEnabled(true);
         rbtnUDP.setEnabled(true);
         
-        btnStop.setEnabled(false);
+       
         btnSearch.setEnabled(false);
         btnShowFiles.setEnabled(false);
         btnShowNeighbours.setEnabled(false);
@@ -637,7 +600,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         btnShowNeighbours.setEnabled(true);
         rbtnRPC.setEnabled(false);
         rbtnUDP.setEnabled(false);
-        btnStop.setEnabled(true);
+        
         isConnected = true;
     }
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
@@ -730,7 +693,6 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private javax.swing.JButton btnShowFiles;
     private javax.swing.JButton btnShowNeighbours;
     private javax.swing.JButton btnStart;
-    private javax.swing.JButton btnStop;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

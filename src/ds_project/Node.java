@@ -123,17 +123,9 @@ public class Node extends Host{
             //TODO
             // add neighbour search 
             neighbourCheckingAndSetting();
-            boolean connect = false;
             try{
-                connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
-            }catch(BsRegisterException|TCPException ex){
-                System.out.println(ex.getMessage());
-                connect = false;
-            }
-            if(!connect){
-                System.out.println("Cound not connect to the neighbour");
-                return false;
-            }
+                neighbours[0].sendJoin(ip,port);
+            }catch(TCPException ex){}
             startReceiving();
             return true;
         }else if(neighbours.length==2){
@@ -141,7 +133,8 @@ public class Node extends Host{
             if(!connectToTheNetwork(neighbours[0],neighbours[1])){
                 unregister();
                 stopReceiving();
-                throw new InitialNodeConnectionException("Could not connect to the neighbour, try again");               
+                throw new InitialNodeConnectionException
+                        ("Could not connect to the neighbour, try again");               
             }	
             return true;
         }else if(neighbours.length==3){
@@ -153,7 +146,8 @@ public class Node extends Host{
             if(!connectToTheNetwork(neighbours[index_1],neighbours[index_2])){
                 unregister();
                 stopReceiving();
-                return false;
+                throw new InitialNodeConnectionException
+                        ("Could not connect to the neighbour, try again"); 
             }	
             return true;
         }
@@ -332,7 +326,7 @@ public class Node extends Host{
                 try{
                     neighbour_.sendSearchRequest(query,ip,port); 
                 }catch(IOException|TCPException ex){
-                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
                 }
            });
         }
