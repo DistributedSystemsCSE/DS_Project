@@ -32,6 +32,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         initComponents();
         buttonGroup1.add(rbtnRPC);
         buttonGroup1.add(rbtnUDP);
+        btnStop.setEnabled(false);
         init();
     }
     
@@ -609,7 +610,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         btnStart.setEnabled(true);
         rbtnRPC.setEnabled(true);
         rbtnUDP.setEnabled(true);
-
+        
+        btnStop.setEnabled(false);
         btnSearch.setEnabled(false);
         btnShowFiles.setEnabled(false);
         btnShowNeighbours.setEnabled(false);
@@ -635,6 +637,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         btnShowNeighbours.setEnabled(true);
         rbtnRPC.setEnabled(false);
         rbtnUDP.setEnabled(false);
+        btnStop.setEnabled(true);
         isConnected = true;
     }
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
