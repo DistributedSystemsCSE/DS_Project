@@ -39,8 +39,8 @@ public class SearchResultTable extends Observable{
     public void removeLeavedPeerResults(Host host){
         for(String key:searchTable.keySet()){
            HashSet<SearchResult> set = searchTable.get(key);
-            if(set.contains(host)){
-                set.remove(host);
+           if(set.contains(new SearchResult(host,null))){
+                set.remove(new SearchResult(host,null));
                 searchTable.put(key, set);
             }
         }
