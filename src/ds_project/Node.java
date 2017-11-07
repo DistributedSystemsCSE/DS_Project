@@ -89,7 +89,7 @@ public class Node extends Host{
         return InstanceHolder.instance;
     }
           
-    public boolean register() throws IOException{
+    public boolean register() throws IOException,BsRegisterException{
         Neighbour[] neighbours;
         String str = (new Message(MessageType.REG, ip,port, CLIENT_NAME))
                 .getMessage();  
@@ -101,13 +101,10 @@ public class Node extends Host{
             unregister();
             return false;
         }
-        try{
-            neighbours = MessageHandler.getInstance()
-                .decodeRegisterResponse(responce);
-        }catch(BsRegisterException ex){            
-            System.err.println(ex.getMessage());
-            return false;
-        }
+       
+        neighbours = MessageHandler.getInstance()
+            .decodeRegisterResponse(responce);
+        
         //System.out.println("Size: "+neighbours.length);
         
                 

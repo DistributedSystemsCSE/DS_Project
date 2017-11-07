@@ -356,7 +356,7 @@ public class MessageHandler implements Runnable {
             throws BsRegisterException {
 
         String[] mes = message.split(" ");
-        System.out.println(message);
+        System.out.println("REG responce: "+message);
         System.out.println("mes: " + mes[2]);
         int no_nodes = Integer.parseInt(mes[2]);
 

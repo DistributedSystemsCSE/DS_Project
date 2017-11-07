@@ -2,6 +2,7 @@ package gui;
 
 import configs.Configs;
 import ds_project.Node;
+import helper.BsRegisterException;
 import helper.SearchResult;
 import helper.SearchResultTable;
 import java.io.IOException;
@@ -454,8 +455,10 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 JOptionPane.showMessageDialog(this,
                         "Could not register. Check the server");  
             }
+        }catch(BsRegisterException ex){
+            JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
-            JOptionPane.showMessageDialog(this,"the port is already using"); 
+            JOptionPane.showMessageDialog(this,"The port is already using"); 
         }catch(SocketTimeoutException ex){
             JOptionPane.showMessageDialog(this,
                     "Unable to communicate with server\n"
@@ -549,31 +552,36 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                     node.leave();
                     node.unregister();
                 }
-                btnSetIP.setEnabled(true);
-                txtIP.setEditable(true);
-                btnSetPort.setEnabled(true);
-                txtPort.setEditable(true);
-                btnSetName.setEnabled(true);
-                txtName.setEditable(true);
-                btnSetServerIP.setEnabled(true);
-                txtServerIP.setEditable(true);
-                btnSetServerPort.setEnabled(true);
-                txtServerPort.setEditable(true);
-
-                btnSearch.setEnabled(false);
-                btnShowFiles.setEnabled(false);
-                btnShowNeighbours.setEnabled(false);
-                isConnected = false;
+                goToStartConditions();
             }catch(SocketTimeoutException ex){
                 JOptionPane.showMessageDialog(this,
                         "Unable to communicate with server\n"
                                 + "Unregistation fail"); 
+                goToStartConditions();
             }catch(IOException ex){
+                ex.printStackTrace();
                 JOptionPane.showMessageDialog(this,ex.getMessage());  
             }
         }
     }//GEN-LAST:event_btnStopActionPerformed
 
+    private void goToStartConditions(){
+        btnSetIP.setEnabled(true);
+        txtIP.setEditable(true);
+        btnSetPort.setEnabled(true);
+        txtPort.setEditable(true);
+        btnSetName.setEnabled(true);
+        txtName.setEditable(true);
+        btnSetServerIP.setEnabled(true);
+        txtServerIP.setEditable(true);
+        btnSetServerPort.setEnabled(true);
+        txtServerPort.setEditable(true);
+
+        btnSearch.setEnabled(false);
+        btnShowFiles.setEnabled(false);
+        btnShowNeighbours.setEnabled(false);
+        isConnected = false;
+    }
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         if(isConnected){
             try{
