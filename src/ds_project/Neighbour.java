@@ -3,12 +3,14 @@ package ds_project;
 import communication.Communicator;
 import configs.Configs;
 import helper.BsRegisterException;
+import helper.InitialNodeConnectionException;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import helper.TCPException;
 import java.io.IOException;
-
+import java.net.SocketTimeoutException;
+import java.util.Objects;
 
 /**
  *
@@ -28,17 +30,17 @@ public class Neighbour extends Host{
     }
     
     public boolean sendJoinAsFirstNeighbour(String ip_sender,int port_sender) 
-            throws BsRegisterException,IOException, TCPException{
+            throws BsRegisterException,IOException,TCPException{
         String message = (new Message(MessageType.JOIN, ip_sender, port_sender))
                 .getMessage();
         //com.sendToPeer(message, ip, port);
         System.out.println(ip+" "+port);
         String responce;
         try{
-            responce = com.sendInitalJoin(message, ip, port);
+            responce = com.sendInitalJoin(message, ip, port);        
         }catch(TCPException ex){
             incrementChecked_alive_count();
-            throw ex;
+            throw ex;                    
         }
         System.out.println("A: "+responce);
         if(responce==null)

@@ -3,8 +3,10 @@ package gui;
 import configs.Configs;
 import ds_project.Node;
 import helper.BsRegisterException;
+import helper.InitialNodeConnectionException;
 import helper.SearchResult;
 import helper.SearchResultTable;
+import helper.TCPException;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.SocketTimeoutException;
@@ -28,6 +30,17 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
      */
     public NodeGUI() {
         initComponents();
+        buttonGroup1.add(rbtnRPC);
+        buttonGroup1.add(rbtnUDP);
+        btnStop.setEnabled(false);
+        init();
+    }
+    
+    private void init(){
+        if(configs.isUDP())
+            rbtnUDP.setSelected(true);
+        else
+            rbtnRPC.setSelected(true);
     }
 
     /**
@@ -39,6 +52,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -66,6 +80,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         btnShowNeighbours = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtaDetails = new javax.swing.JTextArea();
+        rbtnUDP = new javax.swing.JRadioButton();
+        rbtnRPC = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -366,6 +382,20 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                 .addGap(18, 18, 18))
         );
 
+        rbtnUDP.setText("UDP");
+        rbtnUDP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtnUDPActionPerformed(evt);
+            }
+        });
+
+        rbtnRPC.setText("RPC");
+        rbtnRPC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtnRPCActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -380,19 +410,31 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(332, 332, 332)
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbtnUDP)
+                            .addComponent(rbtnRPC))
+                        .addGap(162, 162, 162)
                         .addComponent(pnlShowFiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 96, Short.MAX_VALUE)))
                 .addGap(79, 79, 79))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlShowFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnlShowFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(rbtnUDP)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(rbtnRPC)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 207, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -436,25 +478,14 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         try{
             
             if(node.register()){
-                btnSetIP.setEnabled(false);
-                txtIP.setEditable(false);
-                btnSetPort.setEnabled(false);
-                txtPort.setEditable(false);
-                btnSetName.setEnabled(false);
-                txtName.setEditable(false);
-                btnSetServerIP.setEnabled(false);
-                txtServerIP.setEditable(false);
-                btnSetServerPort.setEnabled(false);
-                txtServerPort.setEditable(false);
-
-                btnSearch.setEnabled(true);
-                btnShowFiles.setEnabled(true);
-                btnShowNeighbours.setEnabled(true);
-                isConnected = true;
+                setStartedContions();
             }else{
                 JOptionPane.showMessageDialog(this,
                         "Could not register. Check the server");  
             }
+             
+        }catch(InitialNodeConnectionException ex){
+            JOptionPane.showMessageDialog(this,ex.getMessage());           
         }catch(BsRegisterException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
@@ -576,11 +607,38 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         txtServerIP.setEditable(true);
         btnSetServerPort.setEnabled(true);
         txtServerPort.setEditable(true);
-
+        btnStart.setEnabled(true);
+        rbtnRPC.setEnabled(true);
+        rbtnUDP.setEnabled(true);
+        
+        btnStop.setEnabled(false);
         btnSearch.setEnabled(false);
         btnShowFiles.setEnabled(false);
         btnShowNeighbours.setEnabled(false);
+        
         isConnected = false;
+    }
+    
+    private void setStartedContions(){
+        btnSetIP.setEnabled(false);
+        txtIP.setEditable(false);
+        btnSetPort.setEnabled(false);
+        txtPort.setEditable(false);
+        btnSetName.setEnabled(false);
+        txtName.setEditable(false);
+        btnSetServerIP.setEnabled(false);
+        txtServerIP.setEditable(false);
+        btnSetServerPort.setEnabled(false);
+        txtServerPort.setEditable(false);
+        btnStart.setEnabled(false);
+
+        btnSearch.setEnabled(true);
+        btnShowFiles.setEnabled(true);
+        btnShowNeighbours.setEnabled(true);
+        rbtnRPC.setEnabled(false);
+        rbtnUDP.setEnabled(false);
+        btnStop.setEnabled(true);
+        isConnected = true;
     }
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         if(isConnected){
@@ -618,6 +676,14 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private void btnSetServerIPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetServerIPActionPerformed
         configs.setProperty("SERVER_IP", txtServerIP.getText());
     }//GEN-LAST:event_btnSetServerIPActionPerformed
+
+    private void rbtnUDPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnUDPActionPerformed
+        configs.setIsUDP("true");
+    }//GEN-LAST:event_rbtnUDPActionPerformed
+
+    private void rbtnRPCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnRPCActionPerformed
+        configs.setIsUDP("false");
+    }//GEN-LAST:event_rbtnRPCActionPerformed
 
     /**
      * @param args the command line arguments
@@ -665,6 +731,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private javax.swing.JButton btnShowNeighbours;
     private javax.swing.JButton btnStart;
     private javax.swing.JButton btnStop;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -673,6 +740,8 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel pnlShowFiles;
+    private javax.swing.JRadioButton rbtnRPC;
+    private javax.swing.JRadioButton rbtnUDP;
     private javax.swing.JTextField txtIP;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPort;
