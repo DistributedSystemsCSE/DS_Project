@@ -4,12 +4,14 @@ import communication.Communicator;
 import configs.Configs;
 import helper.BsRegisterException;
 import helper.FileHandler;
+import helper.InitialNodeConnectionException;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import helper.SearchResultTable;
 import helper.TCPException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,14 +91,20 @@ public class Node extends Host{
         return InstanceHolder.instance;
     }
           
-    public boolean register() throws IOException,BsRegisterException{
+    public boolean register() throws BsRegisterException,IOException,
+            InitialNodeConnectionException{
         Neighbour[] neighbours;
         String str = (new Message(MessageType.REG, ip,port, CLIENT_NAME))
                 .getMessage();  
         com.sendToBS(str);
-        
-        String responce = com.receiveFromBS();
-       
+        String responce=null;
+        try{
+        responce = com.receiveFromBS();
+        }catch(SocketTimeoutException ex){
+            unregister();
+            throw ex;
+        }
+        System.out.println("Server passed...");
         if(responce==null){
             unregister();
             return false;
@@ -121,12 +129,12 @@ public class Node extends Host{
             boolean connect = false;
             try{
                 connect = neighbours[0].sendJoinAsFirstNeighbour(ip,port);
-            }catch(BsRegisterException|IOException|TCPException ex){
-                ex.printStackTrace();
+            }catch(BsRegisterException|TCPException ex){
+                System.out.println(ex.getMessage());
                 connect = false;
             }
             if(!connect){
-                unregister();
+                System.out.println("Cound not connect to the neighbour");
                 return false;
             }
             startReceiving();
@@ -136,7 +144,7 @@ public class Node extends Host{
             if(!connectToTheNetwork(neighbours[0],neighbours[1])){
                 unregister();
                 stopReceiving();
-                return false;
+                throw new InitialNodeConnectionException("Could not connect to the neighbour, try again");               
             }	
             return true;
         }else if(neighbours.length==3){
@@ -179,7 +187,8 @@ public class Node extends Host{
             return false;
         }
         long startTime = System.currentTimeMillis(); 
-        while(false||(System.currentTimeMillis()-startTime)<TIME_OUT_FOR_FIRST_TWO){
+        while(false||(System.currentTimeMillis()-startTime)
+                <TIME_OUT_FOR_FIRST_TWO){
             if(neighbours_list.size()>0){
                 connected = true;
                 break;

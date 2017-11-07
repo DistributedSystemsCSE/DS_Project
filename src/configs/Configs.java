@@ -61,6 +61,10 @@ public class Configs {
         return getStringProperty("IS_UDP").equals("true");        
     }
     
+    public void setIsUDP(String value){        
+        setProperty("IS_UDP",value);        
+    }
+    
     private int getIntegerProperty(String propertyName){
         try{
             prop.load(new FileInputStream("configs.ds"));
