@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -369,15 +370,15 @@ public class Node extends Host{
                     neighbours_size = neighbours_list.size();
                     size = MAX_NUMBER_OF_NEIGHBORS - neighbours_size;
                 }
-                synchronized(neighbours_list){
-                    neighbours_list.stream().forEach((neighbour) -> {
-                        System.out.println("checking " + neighbour.getChecked_alive_count());
-                        //System.out.println("checking");
+                synchronized(neighbours_list){              
+                    for (Iterator<Neighbour> iterator = neighbours_list.iterator(); iterator.hasNext(); ) {
+                        Neighbour neighbour = iterator.next();
                         if(neighbour.getChecked_alive_count()
-                                >MAX_CKECKED_ALIVE_COUNT){
-                            neighbours_list.remove(neighbour);
+                                >=MAX_CKECKED_ALIVE_COUNT){
+                            iterator.remove();
                         }
-                    });
+                        
+                    }
                 }        
                 if(size<=0||neighbours_size==0){
                     try {
