@@ -1,1 +1,13 @@
 /src/test/
+/dist/
+/build/
+/Test_REST/nbproject/private/
+/Test_REST/build/
+/Test_REST/dist/
+/J_REST/nbproject/private/
+/maven_rest/target/
+/WebApplication1/nbproject/private/
+/WebApplication1/build/
+/J_REST/
+/maven_rest/
+/WebApplication1/
