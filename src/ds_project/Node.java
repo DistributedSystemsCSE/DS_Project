@@ -98,12 +98,9 @@ public class Node extends Host{
                 .getMessage();  
         com.sendToBS(str);
         String responce=null;
-        try{
+       
         responce = com.receiveFromBS();
-        }catch(SocketTimeoutException ex){
-            unregister();
-            throw ex;
-        }
+                   
         System.out.println("Server passed...");
         if(responce==null){
             unregister();

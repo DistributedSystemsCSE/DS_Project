@@ -1,1 +1,4 @@
 /src/test/
+/nbproject/private/
+/dist/
+/build/
