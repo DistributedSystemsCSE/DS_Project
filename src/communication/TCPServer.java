@@ -10,7 +10,7 @@ import javax.jws.soap.SOAPBinding;
  */
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-public interface RPCServer {
+public interface TCPServer {
     @WebMethod void handleRequest(String msg);
     @WebMethod String handleInitialJoinRequest(String msg);
 }

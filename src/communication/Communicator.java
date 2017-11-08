@@ -18,8 +18,8 @@ import javax.xml.ws.Service;
  *
  * @author Hareen Udayanath
  */
-@WebService(endpointInterface = "communication.RPCServer")
-public class Communicator implements Runnable,RPCServer{
+@WebService(endpointInterface = "communication.TCPServer")
+public class Communicator implements Runnable,TCPServer{
     private String SERVER_IP;
     private String CLIENT_IP;
     private int SERVER_PORT;
@@ -94,13 +94,13 @@ public class Communicator implements Runnable,RPCServer{
 
     /**
      *  
-     * Receive the RPC message
+     * Receive the TCP message
      * @param msg 
      */
     @Override
     public void handleRequest(String msg) {
         String responce = msg;
-        System.out.println("rpc_receiver: "+responce);
+        System.out.println("tcp_receiver: "+responce);
         if(responce != null){                               
             messageHandler.putMessage(responce);
         } 
@@ -139,7 +139,7 @@ public class Communicator implements Runnable,RPCServer{
             }
         }else{
             try{
-                startRPCServer();
+                startTCPServer();
             }catch(IOException ex){}
         }
     }   
@@ -160,7 +160,7 @@ public class Communicator implements Runnable,RPCServer{
         if(IS_UDP)
             send(message,peerIp,peerPort,-1);
         else
-            sendRPC(message, peerIp, peerPort);
+            sendTCP(message, peerIp, peerPort);
     }
     
     public String sendInitalJoin(String message, String peerIp, int peerPort)
@@ -171,7 +171,7 @@ public class Communicator implements Runnable,RPCServer{
             responce = receiveWithTimeout();
             return responce;
         }else{
-             responce = sendAndReceiveRPC(message, peerIp, peerPort);
+             responce = sendAndReceiveTCP(message, peerIp, peerPort);
              return responce;
         }
     }
@@ -251,7 +251,7 @@ public class Communicator implements Runnable,RPCServer{
              
     }
     
-    public void sendRPC(String message,String ip,int port) 
+    public void sendTCP(String message,String ip,int port) 
             throws IOException,TCPException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
@@ -265,7 +265,7 @@ public class Communicator implements Runnable,RPCServer{
         
         try{
             Service service = Service.create(url, qname);            
-            RPCServer serverResponce = service.getPort(RPCServer.class);  
+            TCPServer serverResponce = service.getPort(TCPServer.class);  
             serverResponce.handleRequest(message);
         }catch(RuntimeException ex){
             throw new TCPException(ex.getMessage());
@@ -273,7 +273,7 @@ public class Communicator implements Runnable,RPCServer{
         
     }
     
-    public String sendAndReceiveRPC(String message,String ip,int port) 
+    public String sendAndReceiveTCP(String message,String ip,int port) 
             throws IOException,TCPException{
         
         String url_string = "http://"+ip+":"+port+"/ds";
@@ -287,14 +287,14 @@ public class Communicator implements Runnable,RPCServer{
 
         try{
             Service service = Service.create(url, qname);            
-            RPCServer serverResponce = service.getPort(RPCServer.class);            
+            TCPServer serverResponce = service.getPort(TCPServer.class);            
             return serverResponce.handleInitialJoinRequest(message);
         }catch(RuntimeException ex){
             throw new TCPException(ex.getMessage());
         }
     }
     
-    public void startRPCServer() throws IOException,RuntimeException{
+    public void startTCPServer() throws IOException,RuntimeException{
         ep = Endpoint.create(this);
         String url_string = "http://"+CLIENT_IP+":"+CLIENT_PORT+"/ds";
         ep.publish(url_string);
