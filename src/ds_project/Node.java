@@ -197,9 +197,9 @@ public class Node extends Host{
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)
                 <TIME_OUT_FOR_FIRST_TWO){
-            System.out.println("AA: "+neighbours_list.size());
+            
             if(neighbours_list.size()>0){
-                System.out.println("Neighbour connection OK...");
+                //System.out.println("Neighbour connection OK...");
                 connected = true;
                 break;
             }

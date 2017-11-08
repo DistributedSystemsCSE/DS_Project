@@ -483,12 +483,12 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             }
                   
         }catch(BsRegisterException ex){
-            if(ex.getErrorValue()==9998){
-                try {
-                    node.unregister();
-                } catch (IOException ex1) {                    
-                }
-            }
+//            if(ex.getErrorValue()==9998){
+//                try {
+//                    node.unregister();
+//                } catch (IOException ex1) {                    
+//                }
+//            }
                 
             JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
