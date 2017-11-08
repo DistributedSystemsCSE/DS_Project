@@ -352,7 +352,7 @@ public class Node extends Host{
                 try{
                     neighbour_.sendSearchRequest(query,ip,port); 
                 }catch(IOException|TCPException ex){
-                    ex.printStackTrace();
+                    //ex.printStackTrace();
                 }
            });
         }
@@ -404,6 +404,14 @@ public class Node extends Host{
                     }
                 }        
                 if(size<=0||neighbours_size==0){
+                    synchronized(neighbours_list){
+                        neighbours_list.stream().forEach((neighbour) -> {                            
+                            try{
+                                neighbour.sendIsAlive(ip,port);
+                            }catch(IOException|TCPException ex){
+                            }
+                        });
+                    }
                     try {
                         Thread.sleep(TIME_OUT_NEIGHBOUR_SETTER);
                         continue;
@@ -451,6 +459,7 @@ public class Node extends Host{
         @Override
         public void run() {
             while(true){
+                
                 synchronized(neighbours_list){
                     neighbours_list.stream().forEach((neighbour) -> {
                         neighbour.incrementChecked_alive_count();
