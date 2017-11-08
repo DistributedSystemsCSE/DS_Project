@@ -145,6 +145,7 @@ public class Node extends Host{
                             ("Could not connect to any of neighbours");
                 }                        
             }	
+            System.out.println("llllllllll");
             return true;
         }else if(neighbours.length==3){
             //System.out.println("3333");
@@ -184,15 +185,21 @@ public class Node extends Host{
         boolean connected = false;
         try{
             nb1.sendJoin(ip,port);            
-        }catch(IOException|TCPException ex){}
+        }catch(IOException|TCPException ex){
+            //ex.printStackTrace();
+        }
         try{            
             nb2.sendJoin(ip,port);
-        }catch(IOException|TCPException ex){}
+        }catch(IOException|TCPException ex){
+            //ex.printStackTrace();
+        }
         
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)
                 <TIME_OUT_FOR_FIRST_TWO){
+            System.out.println("AA: "+neighbours_list.size());
             if(neighbours_list.size()>0){
+                System.out.println("Neighbour connection OK...");
                 connected = true;
                 break;
             }
@@ -320,7 +327,7 @@ public class Node extends Host{
         if (!neighbours_list.stream().noneMatch((tem) -> (tem.equals(neb)))) {
             return false;
         }
-        
+        System.out.println("Neighbour added.........");
         neighbours_list.add(neb);
         return true;
     }
