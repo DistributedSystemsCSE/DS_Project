@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
+
 
 /**
  *
@@ -38,7 +37,7 @@ public class Communicator implements Runnable,RPCServer{
         configureVariables();
     }
     
-    public void configureVariables(){
+    public final void configureVariables(){
         TIME_OUT_RECEIVE = configs.getReceiverTimeout();
         SERVER_IP = configs.getServerIP();
         CLIENT_IP = configs.getClientIP();

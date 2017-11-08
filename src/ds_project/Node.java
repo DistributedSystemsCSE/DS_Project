@@ -57,7 +57,7 @@ public class Node extends Host{
         this.configureVariables();
     }
     
-    public void configureVariables(){
+    public final void configureVariables(){
         super.setIp(configs.getClientIP());
         super.setPort(configs.getClientPort());
         CLIENT_NAME = configs.getClientName();        
@@ -183,7 +183,9 @@ public class Node extends Host{
     private boolean connectToTheNetwork(Neighbour nb1,Neighbour nb2){
         boolean connected = false;
         try{
-            nb1.sendJoin(ip,port);
+            nb1.sendJoin(ip,port);            
+        }catch(IOException|TCPException ex){}
+        try{            
             nb2.sendJoin(ip,port);
         }catch(IOException|TCPException ex){}
         

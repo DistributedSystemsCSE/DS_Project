@@ -484,7 +484,7 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
             JOptionPane.showMessageDialog(this,"The port is already using"); 
-        }catch(SocketTimeoutException ex){
+        }catch(SocketTimeoutException ex){            
             JOptionPane.showMessageDialog(this,
                     "Unable to communicate with server\n"
                             + "Registation fail"); 
