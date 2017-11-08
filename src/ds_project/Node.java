@@ -4,14 +4,13 @@ import communication.Communicator;
 import configs.Configs;
 import helper.BsRegisterException;
 import helper.FileHandler;
-import helper.InitialNodeConnectionException;
+import helper.NeighbourConnectionException;
 import helper.Message;
 import helper.MessageType;
 import helper.MessageHandler;
 import helper.SearchResultTable;
 import helper.TCPException;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -37,6 +36,8 @@ public class Node extends Host{
     private final List<Neighbour> neighbours_list;
     private final FileHandler fileHandler;
     private final SearchResultTable searchResultTable;
+    private boolean foceRegister = false;
+    private boolean isUDP = true;
     
     private Node(){
         
@@ -63,6 +64,7 @@ public class Node extends Host{
         TIME_OUT_FOR_FIRST_TWO = configs.getTimeoutForFirstTwo();
         MAX_NUMBER_OF_NEIGHBORS = configs.getMaxNumberOfNeighbours();
         com.configureVariables();
+        isUDP = configs.isUDP();
     }
 
     public SearchResultTable getSearchResultTable(){
@@ -75,6 +77,10 @@ public class Node extends Host{
     
     public List<String> getFileNames(){
         return fileHandler.getFileNames();
+    }
+    
+    public void setForceRegsister(boolean foceRegister){
+        this.foceRegister = foceRegister;
     }
     
     /**
@@ -93,7 +99,7 @@ public class Node extends Host{
     }
           
     public boolean register() throws BsRegisterException,IOException,
-            InitialNodeConnectionException{
+            NeighbourConnectionException{
         Neighbour[] neighbours;
         String str = (new Message(MessageType.REG, ip,port, CLIENT_NAME))
                 .getMessage();  
@@ -132,10 +138,12 @@ public class Node extends Host{
         }else if(neighbours.length==2){
             startReceiving();
             if(!connectToTheNetwork(neighbours[0],neighbours[1])){
-                unregister();
-                stopReceiving();
-                throw new InitialNodeConnectionException
-                        ("Could not connect to the neighbour, try again");               
+                if(!foceRegister){
+                    unregister();
+                    stopReceiving();
+                    throw new NeighbourConnectionException
+                            ("Could not connect to any of neighbours");
+                }                        
             }	
             return true;
         }else if(neighbours.length==3){
@@ -145,10 +153,12 @@ public class Node extends Host{
             int index_2 = randomGenerator.nextInt(neighbours.length);
             //what if first two fails but third is possible		
             if(!connectToTheNetwork(neighbours[index_1],neighbours[index_2])){
-                unregister();
-                stopReceiving();
-                throw new InitialNodeConnectionException
-                        ("Could not connect to the neighbour, try again"); 
+                if(!foceRegister){
+                    unregister();
+                    stopReceiving();
+                    throw new NeighbourConnectionException
+                            ("Could not connect to any of neighbours");
+                }    
             }	
             return true;
         }
@@ -175,9 +185,8 @@ public class Node extends Host{
         try{
             nb1.sendJoin(ip,port);
             nb2.sendJoin(ip,port);
-        }catch(IOException|TCPException ex){
-            return false;
-        }
+        }catch(IOException|TCPException ex){}
+        
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)
                 <TIME_OUT_FOR_FIRST_TWO){
@@ -196,7 +205,7 @@ public class Node extends Host{
     private void neighbourCheckingAndSetting(){
         Thread neighbourSetter = new Thread(new NeighbourSetter());
         neighbourSetter.start();
-        if(configs.isUDP()){
+        if(isUDP){
             Thread neighbourChecker = new Thread(new NeighbourChecker());
             neighbourChecker.start();
         }
@@ -355,7 +364,7 @@ public class Node extends Host{
         public NeighbourSetter(){
             TIME_OUT_NEIGHBOUR_SETTER = configs.getNeighbourSetterTimeout();
             
-            if(configs.isUDP())
+            if(isUDP)
                 MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCountUDP();
             else
                 MAX_CKECKED_ALIVE_COUNT = configs.getMaxAliveCountTCP();

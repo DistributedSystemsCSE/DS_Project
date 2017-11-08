@@ -3,7 +3,7 @@ package gui;
 import configs.Configs;
 import ds_project.Node;
 import helper.BsRegisterException;
-import helper.InitialNodeConnectionException;
+import helper.NeighbourConnectionException;
 import helper.SearchResult;
 import helper.SearchResultTable;
 import helper.TCPException;
@@ -462,13 +462,27 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
         node.configureVariables();
         searchResultTable = node.getSearchResultTable();
         searchResultTable.addObserver(this);
-        try{
-            
+        start();
+    }//GEN-LAST:event_btnStartActionPerformed
+
+    private void start(){        
+        try{            
             node.register();
             setStartedContions();            
              
-        }catch(InitialNodeConnectionException ex){
-            JOptionPane.showMessageDialog(this,ex.getMessage());           
+        }catch(NeighbourConnectionException ex){
+            String[] buttons = { "Retry", "Force Register", "Cancel"};    
+            int returnValue = JOptionPane
+                    .showOptionDialog(null, ex.getMessage(), "Could not register",
+            JOptionPane.DEFAULT_OPTION, 0, null, buttons, buttons[2]);
+            if(returnValue==0){
+                node.setForceRegsister(false);
+                start();
+            }else if(returnValue==1){
+                node.setForceRegsister(true);
+                start();
+            }
+                  
         }catch(BsRegisterException ex){
             JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
@@ -479,12 +493,11 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
                             + "Registation fail"); 
         }catch(IOException ex){            
             JOptionPane.showMessageDialog(this,ex.getMessage());  
-        }
-         
-        
-         
-    }//GEN-LAST:event_btnStartActionPerformed
+        }  
 
+    }
+    
+    
     private void btnSetPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetPortActionPerformed
         configs.setProperty("CLIENT_PORT", txtPort.getText());
     }//GEN-LAST:event_btnSetPortActionPerformed
