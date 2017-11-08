@@ -249,20 +249,20 @@ public class MessageHandler implements Runnable {
                     ip = mes[3];
                     port = Integer.parseInt(mes[4]);
                     int value = Integer.parseInt(mes[2]);
-                    System.out.println("JOINOK value"+value);
-            switch (value) {
-                case 0:
-                    System.out.println("New JoinOK message");
-                    node.addNeighbours(new Neighbour(ip, port));
-                    break;
-                case 9999:
-                    System.out.println("New JoinOK message, Neighbour refuced, connecting");
-                    node.addNeighbours(new Neighbour(ip, port));
-                    break;
-                default:
-                    System.out.println("New Failed JoinOK message");
-                    break;
-            }
+                    System.out.println("JOINOK value" + value);
+                    switch (value) {
+                        case 0:
+                            System.out.println("New JoinOK message");
+                            node.addNeighbours(new Neighbour(ip, port));
+                            break;
+                        case 9999:
+                            System.out.println("New JoinOK message, Neighbour refuced, connecting");
+                            node.addNeighbours(new Neighbour(ip, port));
+                            break;
+                        default:
+                            System.out.println("New Failed JoinOK message");
+                            break;
+                    }
                 }
                 break;
             case "NEREQ":
@@ -317,7 +317,7 @@ public class MessageHandler implements Runnable {
                     port = Integer.parseInt(mes[3]);
                     node.removeNeighbour(new Neighbour(ip, port));
                     node.getSearchResultTable()
-                            .removeLeavedPeerResults(new Host(ip,port));
+                            .removeLeavedPeerResults(new Host(ip, port));
                 }
                 break;
             case "ISALIVE":
@@ -365,7 +365,7 @@ public class MessageHandler implements Runnable {
             throws BsRegisterException {
 
         String[] mes = message.split(" ");
-        System.out.println("REG responce: "+message);
+        System.out.println("REG responce: " + message);
         System.out.println("mes: " + mes[2]);
         int no_nodes = Integer.parseInt(mes[2]);
 
