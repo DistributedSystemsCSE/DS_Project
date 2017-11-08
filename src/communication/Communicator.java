@@ -18,7 +18,7 @@ import javax.xml.ws.Service;
  *
  * @author Hareen Udayanath
  */
-@WebService(endpointInterface = "communication.RPCServer")
+@WebService(endpointInterface = "communication.TCPServer")
 public class Communicator implements Runnable,TCPServer{
     private String SERVER_IP;
     private String CLIENT_IP;
