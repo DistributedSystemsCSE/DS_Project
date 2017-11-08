@@ -301,8 +301,7 @@ public class MessageHandler implements Runnable {
                         if (node.addNeighbours(new Neighbour(
                                 ip,
                                 port))) {
-                            String resMsg = (new Message(MessageType.JOINOK,
-                                    0,
+                            String resMsg = (new Message(MessageType.JOIN,
                                     node.getIp(),
                                     node.getPort())).getMessage();
                             System.out.println("Sending new neighbour joinok:" + resMsg);
