@@ -19,7 +19,7 @@ public class SearchResultTable extends Observable{
         this.searchTable = new Hashtable<>();
     }
     
-    public void addToTable(String keyWord,SearchResult result){
+    public synchronized void addToTable(String keyWord,SearchResult result){
         if(!searchTable.containsKey(keyWord)){
             searchTable.put(keyWord, new HashSet<>());
         }
@@ -29,14 +29,14 @@ public class SearchResultTable extends Observable{
         notifyObservers();
     }
     
-    public HashSet<SearchResult> getResults(String keyWord){
+    public synchronized HashSet<SearchResult> getResults(String keyWord){
         if(!searchTable.containsKey(keyWord)){
             return new HashSet<>();
         }
         return searchTable.get(keyWord);
     }
 
-    public void removeLeavedPeerResults(Host host){
+    public synchronized void removeLeavedPeerResults(Host host){
         for(String key:searchTable.keySet()){
            HashSet<SearchResult> set = searchTable.get(key);
            if(set.contains(new SearchResult(host,null))){
@@ -46,7 +46,7 @@ public class SearchResultTable extends Observable{
         }
     }
     
-    public String getUpdatedKeyword(){
+    public synchronized String getUpdatedKeyword(){
         return search_keyword;
     }
            
