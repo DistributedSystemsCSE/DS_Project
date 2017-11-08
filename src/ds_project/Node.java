@@ -145,7 +145,7 @@ public class Node extends Host{
                             ("Could not connect to any of neighbours");
                 }                        
             }	
-            System.out.println("llllllllll");
+            System.out.println("connected to, two neighbour");
             return true;
         }else if(neighbours.length==3){
             //System.out.println("3333");
@@ -197,11 +197,12 @@ public class Node extends Host{
         long startTime = System.currentTimeMillis(); 
         while(false||(System.currentTimeMillis()-startTime)
                 <TIME_OUT_FOR_FIRST_TWO){
-            
-            if(neighbours_list.size()>0){
-                //System.out.println("Neighbour connection OK...");
-                connected = true;
-                break;
+            synchronized(neighbours_list){
+                if(neighbours_list.size()>0){
+                    System.out.println("Neighbour connection OK...");
+                    connected = true;
+                    break;
+                }
             }
         }
         if(!connected)
@@ -328,12 +329,16 @@ public class Node extends Host{
             return false;
         }
         System.out.println("Neighbour added.........");
-        neighbours_list.add(neb);
+        synchronized(neighbours_list){
+            neighbours_list.add(neb);
+        }
         return true;
     }
     
     public boolean removeNeighbour(Neighbour neb){
-        return neighbours_list.remove(neb);
+        synchronized(neighbours_list){
+            return neighbours_list.remove(neb);
+        }
     }
     
     /*
@@ -407,13 +412,23 @@ public class Node extends Host{
                     }
                 }
                 synchronized(neighbours_list){
-                    neighbours_list.stream().forEach((neighbour) -> {
+//                    neighbours_list.stream().forEach((neighbour) -> {
+//                        try{
+//                            neighbour.sendNeighbourRequest(size,ip,port);
+//                        }catch(IOException|TCPException ex){
+//                            System.out.println(ex.getMessage());
+//                        }
+//                    });
+                    
+                    for (Iterator<Neighbour> iterator = neighbours_list.iterator(); iterator.hasNext(); ) {
+                        Neighbour neighbour = iterator.next();
                         try{
                             neighbour.sendNeighbourRequest(size,ip,port);
                         }catch(IOException|TCPException ex){
                             System.out.println(ex.getMessage());
                         }
-                    });
+                        
+                    }
                 }
                 try {
                     Thread.sleep(TIME_OUT_NEIGHBOUR_SETTER);                    

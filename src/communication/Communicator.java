@@ -279,7 +279,7 @@ public class Communicator implements Runnable,TCPServer{
         String url_string = "http://"+ip+":"+port+"/ds";
 //        URL url = new URL("http://localhost:9999/ws/hello?wsdl");
         URL url = new URL(url_string);
-        System.out.println("1");
+        //System.out.println("1");
         //1st argument service URI, refer to wsdl document above
 	//2nd argument is service name, refer to wsdl document above
         QName qname = new QName("http://communication/",
