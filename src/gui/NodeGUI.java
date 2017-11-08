@@ -12,6 +12,8 @@ import java.net.BindException;
 import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -481,6 +483,13 @@ public class NodeGUI extends javax.swing.JFrame implements Observer{
             }
                   
         }catch(BsRegisterException ex){
+            if(ex.getErrorValue()==9998){
+                try {
+                    node.unregister();
+                } catch (IOException ex1) {                    
+                }
+            }
+                
             JOptionPane.showMessageDialog(this,ex.getMessage()); 
         }catch(BindException ex){    
             JOptionPane.showMessageDialog(this,"The port is already using"); 
