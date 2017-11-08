@@ -252,6 +252,9 @@ public class MessageHandler implements Runnable {
                     if (value == 0) {
                         System.out.println("New JoinOK message");
                         node.addNeighbours(new Neighbour(ip, port));
+                    } else if (value == 9999){
+                        System.out.println("New JoinOK message, Neighbour refuced, connecting");
+                        node.addNeighbours(new Neighbour(ip, port));
                     } else {
                         System.out.println("New Failed JoinOK message");
                     }
